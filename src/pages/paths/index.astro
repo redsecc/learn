@@ -2,15 +2,33 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PathCard from '../../components/PathCard.astro';
+import { abs, breadcrumb } from '../../lib/seo';
 
 const paths = (await getCollection('paths')).sort((a, b) => a.data.order - b.data.order);
 const lessons = await getCollection('lessons');
 const countFor = (slug: string) => lessons.filter((l) => l.data.path === slug).length;
+
+const jsonLd = [
+  {
+    '@type': 'CollectionPage',
+    name: 'Learning paths',
+    description: 'All RedSec learning paths.',
+    url: abs('/paths'),
+    hasPart: paths.map((p) => ({
+      '@type': 'Course',
+      name: p.data.title,
+      description: p.data.summary,
+      url: abs(`/paths/${p.data.slug}`),
+    })),
+  },
+  breadcrumb([{ name: 'Paths', path: '/paths' }]),
+];
 ---
 
 <BaseLayout
   title="Learning paths"
   description="All RedSec learning paths — structured tracks that take you from enumeration to exploitation, free and without an account."
+  jsonLd={jsonLd}
 >
   <section class="section">
     <div class="container">

@@ -2,15 +2,32 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { withBase } from '../../lib/base';
+import { abs, breadcrumb } from '../../lib/seo';
 
 const refs = (await getCollection('reference')).sort(
   (a, b) => a.data.order - b.data.order
 );
+
+const jsonLd = [
+  {
+    '@type': 'CollectionPage',
+    name: 'Reference',
+    description: 'Cheatsheets and quick reference for red teaming.',
+    url: abs('/reference'),
+    hasPart: refs.map((r) => ({
+      '@type': 'Article',
+      name: r.data.title,
+      url: abs(`/reference/${r.id}`),
+    })),
+  },
+  breadcrumb([{ name: 'Reference', path: '/reference' }]),
+];
 ---
 
 <BaseLayout
   title="Reference"
   description="Cheatsheets and quick reference for red teaming — enumeration checklists, common ports, and more."
+  jsonLd={jsonLd}
 >
   <section class="section">
     <div class="container">

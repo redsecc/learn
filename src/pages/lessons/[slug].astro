@@ -5,6 +5,7 @@ import TableOfContents from '../../components/TableOfContents.astro';
 import ProgressTracker from '../../components/ProgressTracker.astro';
 import Callout from '../../components/Callout.astro';
 import { withBase } from '../../lib/base';
+import { abs, breadcrumb, ORG_REF, SITE_REF } from '../../lib/seo';
 
 export async function getStaticPaths() {
   const lessons = await getCollection('lessons');
@@ -30,9 +31,36 @@ export async function getStaticPaths() {
 
 const { lesson, path, prev, next } = Astro.props;
 const { Content, headings } = await render(lesson);
+
+const jsonLd = [
+  {
+    '@type': 'TechArticle',
+    headline: lesson.data.title,
+    description: lesson.data.summary,
+    url: abs(`/lessons/${lesson.id}`),
+    keywords: lesson.data.tags.join(', '),
+    articleSection: path?.data.title,
+    proficiencyLevel: lesson.data.difficulty,
+    inLanguage: 'en',
+    author: ORG_REF,
+    publisher: ORG_REF,
+    isPartOf: SITE_REF,
+  },
+  breadcrumb([
+    { name: 'Paths', path: '/paths' },
+    ...(path ? [{ name: path.data.title, path: `/paths/${path.data.slug}` }] : []),
+    { name: lesson.data.title, path: `/lessons/${lesson.id}` },
+  ]),
+];
 ---
 
-<BaseLayout title={lesson.data.title} description={lesson.data.summary} ogType="article">
+<BaseLayout
+  title={lesson.data.title}
+  description={lesson.data.summary}
+  ogType="article"
+  keywords={lesson.data.tags}
+  jsonLd={jsonLd}
+>
   <div class="container lesson-shell">
     <div class="lesson-grid">
       <!-- Left sidebar: table of contents -->

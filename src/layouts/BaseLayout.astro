@@ -9,23 +9,67 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { withBase } from '../lib/base';
+import { SITE } from '../lib/site';
 
 interface Props {
   title?: string;
   description?: string;
-  ogType?: string;
+  ogType?: 'website' | 'article';
+  /** Path (base-relative) or absolute URL to a social image. */
+  image?: string;
+  keywords?: string[];
+  /** Extra JSON-LD nodes to merge with the site-wide graph. */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** ISO date for article-type pages. */
+  publishedTime?: string;
+  noindex?: boolean;
 }
 
 const {
   title,
-  description = 'RedSec is a free, open learning center for red teaming. No accounts, no trackers — one click from any lesson.',
+  description = SITE.description,
   ogType = 'website',
+  image = SITE.ogImage,
+  keywords = SITE.keywords,
+  jsonLd,
+  publishedTime,
+  noindex = false,
 } = Astro.props;
 
-const siteName = 'RedSec';
-const pageTitle = title ? `${title} · ${siteName}` : `${siteName} — learn to red team`;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const pageTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).href;
 const favicon = withBase('/favicon.svg');
+
+// Resolve social image to an absolute URL (required by social scrapers).
+const imageUrl = image.startsWith('http')
+  ? image
+  : new URL(withBase(image), Astro.site ?? SITE.url).href;
+
+// Site-wide structured data: who publishes this and what the site is.
+const orgLd = {
+  '@type': 'Organization',
+  '@id': `${SITE.url}/#org`,
+  name: SITE.name,
+  url: SITE.url,
+  description: SITE.description,
+  logo: new URL(withBase('/favicon.svg'), SITE.url).href,
+  sameAs: [SITE.social.github, SITE.social.discord],
+};
+const siteLd = {
+  '@type': 'WebSite',
+  '@id': `${SITE.url}/#website`,
+  name: SITE.name,
+  url: SITE.url,
+  description: SITE.description,
+  inLanguage: 'en',
+  publisher: { '@id': `${SITE.url}/#org` },
+};
+
+const extra = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [orgLd, siteLd, ...extra],
+};
 ---
 
 <!doctype html>
@@ -35,7 +79,13 @@ const favicon = withBase('/favicon.svg');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords.join(', ')} />
     <link rel="canonical" href={canonical} />
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'}
+    />
+    <meta name="generator" content={Astro.generator} />
 
     <!-- SVG favicon derived from the logo mark -->
     <link rel="icon" type="image/svg+xml" href={favicon} />
@@ -44,16 +94,31 @@ const favicon = withBase('/favicon.svg');
 
     <!-- Open Graph / social -->
     <meta property="og:type" content={ogType} />
-    <meta property="og:site_name" content={siteName} />
+    <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:locale" content={SITE.locale} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${SITE.name} — ${SITE.tagline}`} />
+    {ogType === 'article' && publishedTime && (
+      <meta property="article:published_time" content={publishedTime} />
+    )}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={`${SITE.name} — ${SITE.tagline}`} />
 
-    <!-- This site sets no cookies, ships no analytics, makes no third-party requests. -->
+    <!-- Discovery. This site sets no cookies, ships no analytics, no third-party requests. -->
     <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
+
+    <!-- Structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

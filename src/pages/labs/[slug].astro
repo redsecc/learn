@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Callout from '../../components/Callout.astro';
 import { withBase } from '../../lib/base';
+import { abs, breadcrumb, ORG_REF } from '../../lib/seo';
 
 export async function getStaticPaths() {
   const labs = await getCollection('labs');
@@ -15,9 +16,34 @@ export async function getStaticPaths() {
 
 const { lab, path } = Astro.props;
 const { Content } = await render(lab);
+
+const jsonLd = [
+  {
+    '@type': 'LearningResource',
+    name: lab.data.title,
+    description: lab.data.objective,
+    url: abs(`/labs/${lab.id}`),
+    learningResourceType: 'Lab exercise',
+    educationalLevel: lab.data.difficulty,
+    teaches: lab.data.tags.join(', '),
+    inLanguage: 'en',
+    provider: ORG_REF,
+    publisher: ORG_REF,
+  },
+  breadcrumb([
+    { name: 'Labs', path: '/labs' },
+    { name: lab.data.title, path: `/labs/${lab.id}` },
+  ]),
+];
 ---
 
-<BaseLayout title={lab.data.title} description={lab.data.objective} ogType="article">
+<BaseLayout
+  title={lab.data.title}
+  description={lab.data.objective}
+  ogType="article"
+  keywords={lab.data.tags}
+  jsonLd={jsonLd}
+>
   <div class="container lab-shell">
     <article class="lab-main">
       <nav class="crumbs mono" aria-label="Breadcrumb">

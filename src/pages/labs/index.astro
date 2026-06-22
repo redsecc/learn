@@ -2,15 +2,32 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { withBase } from '../../lib/base';
+import { abs, breadcrumb } from '../../lib/seo';
 
 const labs = (await getCollection('labs')).sort((a, b) =>
   a.data.title.localeCompare(b.data.title)
 );
+
+const jsonLd = [
+  {
+    '@type': 'CollectionPage',
+    name: 'Labs',
+    description: 'Guided red team challenges you run yourself.',
+    url: abs('/labs'),
+    hasPart: labs.map((l) => ({
+      '@type': 'LearningResource',
+      name: l.data.title,
+      url: abs(`/labs/${l.id}`),
+    })),
+  },
+  breadcrumb([{ name: 'Labs', path: '/labs' }]),
+];
 ---
 
 <BaseLayout
   title="Labs"
   description="Guided red team challenges. Each lab gives you an objective, local setup, hints, and a full solution — no accounts, no remote infrastructure."
+  jsonLd={jsonLd}
 >
   <section class="section">
     <div class="container">

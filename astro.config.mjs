@@ -16,6 +16,22 @@ export default defineConfig({
     // Options live in ./ec.config.mjs so the <Code> component works in pages.
     expressiveCode(),
     mdx(),
-    sitemap(),
+    sitemap({
+      changefreq: 'weekly',
+      lastmod: new Date(),
+      serialize(item) {
+        // Prioritise the landing page and the learning content.
+        if (item.url === 'https://redsec.cc/') {
+          item.priority = 1.0;
+        } else if (/\/(lessons|paths)\//.test(item.url)) {
+          item.priority = 0.8;
+        } else if (/\/(labs|reference)\//.test(item.url)) {
+          item.priority = 0.7;
+        } else {
+          item.priority = 0.6;
+        }
+        return item;
+      },
+    }),
   ],
 });
