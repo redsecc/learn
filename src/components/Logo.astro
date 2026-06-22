@@ -5,17 +5,26 @@
 import logoRaw from '../assets/redsec_logo.svg?raw';
 
 interface Props {
+  /** Rendered height in px; width follows the mark's aspect ratio. */
   size?: number;
   class?: string;
 }
 const { size = 32, class: className } = Astro.props;
+
+// The supplied mark is centred inside a large square viewBox with wide margins,
+// so it renders tiny. Crop to the mark's measured content box so it fills the
+// space. If a future logo uses a different viewBox this no-ops and falls back
+// to the file's own viewBox (safe).
+const svg = logoRaw
+  .replace(/\s(?:width|height)="[^"]*"/g, '')
+  .replace('viewBox="0 0 2236 2236"', 'viewBox="557 686 1126 866"');
 ---
 
 <span
   class:list={['logo', className]}
-  style={`width:${size}px;height:${size}px`}
+  style={`height:${size}px`}
   aria-hidden="true"
-  set:html={logoRaw}
+  set:html={svg}
 />
 
 <style is:global>
@@ -25,8 +34,8 @@ const { size = 32, class: className } = Astro.props;
     line-height: 0;
   }
   .logo svg {
-    width: 100%;
     height: 100%;
+    width: auto;
     display: block;
   }
 </style>
