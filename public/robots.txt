@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://redsec.cc/sitemap-index.xml
+Sitemap: https://learn.redsec.cc/sitemap-index.xml

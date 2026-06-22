@@ -1,7 +1,7 @@
 // Central site metadata + social links. Used for SEO, Open Graph, JSON-LD.
 export const SITE = {
   name: 'RedSec',
-  url: 'https://redsec.cc',
+  url: 'https://learn.redsec.cc',
   tagline: 'Learn to red team.',
   description:
     'RedSec is a free, open learning center for red teaming and offensive security. Structured paths, hands-on labs, and cheatsheets — no accounts, no tracking, one click from any lesson.',
