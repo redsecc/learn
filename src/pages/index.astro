@@ -1,0 +1,169 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PathCard from '../components/PathCard.astro';
+import Logo from '../components/Logo.astro';
+import { Code } from 'astro-expressive-code/components';
+import { withBase } from '../lib/base';
+
+const paths = (await getCollection('paths')).sort((a, b) => a.data.order - b.data.order);
+const lessons = await getCollection('lessons');
+const countFor = (slug: string) => lessons.filter((l) => l.data.path === slug).length;
+---
+
+<BaseLayout>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Free · open · no account</span>
+        <h1 class="hero-title">
+          Learn to <span class="accent">red team</span>.
+        </h1>
+        <p class="lead">
+          RedSec is a free, open learning center for offensive security. No
+          signup, no login, no tracking — you're one click from your first
+          lesson.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href={withBase('/paths')}>
+            Start now — no account needed
+          </a>
+          <a class="btn" href={withBase('/reference')}>Browse the reference</a>
+        </div>
+        <p class="hero-note mono">No cookies. No analytics. No third-party requests.</p>
+      </div>
+
+      <!-- One angular accent per view: the chamfered terminal -->
+      <div class="hero-accent">
+        <div class="hero-mark">
+          <Logo size={48} />
+        </div>
+        <Code
+          code={`# find binaries that run as their owner — often root\nfind / -perm -4000 2>/dev/null`}
+          lang="bash"
+          frame="terminal"
+          title="enumerate SUID binaries"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured paths -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Learning paths</h2>
+        <a class="mono section-link" href={withBase('/paths')}>All paths →</a>
+      </div>
+      <div class="grid grid-2">
+        {
+          paths.map((p) => (
+            <PathCard
+              title={p.data.title}
+              summary={p.data.summary}
+              slug={p.data.slug}
+              icon={p.data.icon}
+              order={p.data.order}
+              lessonCount={countFor(p.data.slug)}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- What is red teaming -->
+  <section class="section blurb-section">
+    <div class="container blurb">
+      <span class="eyebrow">What is red teaming?</span>
+      <p>
+        Red teaming is offensive security: thinking and acting like an adversary
+        to find the weaknesses in a system before a real attacker does. You
+        enumerate, you probe trust boundaries, and you chain small flaws into
+        real impact — then you document it so defenders can fix it.
+      </p>
+      <p>
+        Everything here is built for <strong>authorized testing and
+        education</strong>. The techniques are real; use them only on systems
+        you own or have explicit permission to test.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--space-24) var(--space-16);
+    border-bottom: var(--hairline);
+  }
+  .hero-grid {
+    display: grid;
+    gap: var(--space-12);
+    align-items: center;
+  }
+  @media (min-width: 920px) {
+    .hero-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+  }
+  .hero-title {
+    font-size: clamp(2.5rem, 7vw, 4rem);
+    margin-bottom: var(--space-6);
+  }
+  .hero-title .accent {
+    color: var(--red);
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+  .hero-note {
+    margin-top: var(--space-4);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+
+  .hero-accent {
+    position: relative;
+    background: var(--surface);
+    border: var(--hairline);
+    border-radius: var(--radius);
+    /* signature angular chamfer */
+    clip-path: var(--chamfer);
+    padding: var(--space-6);
+  }
+  .hero-mark {
+    margin-bottom: var(--space-4);
+  }
+  /* keep expressive-code flush inside the accent */
+  .hero-accent :global(.expressive-code) {
+    margin: 0;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--space-8);
+  }
+  .section-head h2 {
+    margin: 0;
+  }
+  .section-link {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+  .section-link:hover {
+    color: var(--red-hover);
+  }
+
+  .blurb-section {
+    border-top: var(--hairline);
+  }
+  .blurb {
+    max-width: var(--maxw-prose);
+  }
+</style>

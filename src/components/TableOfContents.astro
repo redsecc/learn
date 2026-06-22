@@ -1,0 +1,136 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+interface Props {
+  headings: Heading[];
+}
+const { headings } = Astro.props;
+// Only h2/h3 make the contents.
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  toc.length > 0 && (
+    <nav class="toc" aria-label="On this page">
+      {/* open by default; on desktop the summary is non-interactive so it
+          always stays open, on mobile it collapses to save space */}
+      <details class="toc-details" open>
+        <summary class="toc-title mono">On this page</summary>
+        <ul>
+          {toc.map((h) => (
+            <li class:list={['toc-item', { 'toc-sub': h.depth === 3 }]}>
+              <a href={`#${h.slug}`} data-toc-link={h.slug}>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </nav>
+  )
+}
+
+<script>
+  // Highlight the section currently in view.
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')
+  );
+  if (links.length) {
+    const byId = new Map(links.map((l) => [l.dataset.tocLink!, l]));
+    const headings = links
+      .map((l) => document.getElementById(l.dataset.tocLink!))
+      .filter((el): el is HTMLElement => !!el);
+
+    let current = '';
+    const setActive = (id: string) => {
+      if (id === current) return;
+      current = id;
+      links.forEach((l) => l.classList.remove('active'));
+      byId.get(id)?.classList.add('active');
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) setActive(visible[0].target.id);
+      },
+      { rootMargin: '-80px 0px -70% 0px', threshold: 0 }
+    );
+    headings.forEach((h) => observer.observe(h));
+  }
+</script>
+
+<style>
+  .toc {
+    position: sticky;
+    top: 5rem;
+    font-size: 0.85rem;
+  }
+  .toc-title {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    margin: 0 0 var(--space-3);
+    cursor: default;
+    list-style: none;
+    pointer-events: none; /* desktop: non-interactive label, stays open */
+  }
+  .toc-title::-webkit-details-marker {
+    display: none;
+  }
+  .toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: var(--hairline);
+  }
+  .toc-item a {
+    display: block;
+    padding: 0.3rem 0 0.3rem var(--space-4);
+    margin-left: -1px;
+    border-left: 1px solid transparent;
+    color: var(--text-secondary);
+    line-height: 1.3;
+  }
+  .toc-sub a {
+    padding-left: calc(var(--space-4) + var(--space-4));
+    font-size: 0.95em;
+    color: var(--text-muted);
+  }
+  .toc-item a:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .toc-item a.active {
+    color: var(--red-hover);
+    border-left-color: var(--red);
+  }
+
+  /* On mobile the TOC becomes a real collapsible disclosure. */
+  @media (max-width: 900px) {
+    .toc {
+      position: static;
+      border: var(--hairline);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+    .toc-title {
+      cursor: pointer;
+      list-style: revert;
+      margin-bottom: 0;
+      pointer-events: auto;
+    }
+    .toc-title::-webkit-details-marker {
+      display: revert;
+    }
+    .toc-details[open] .toc-title {
+      margin-bottom: var(--space-3);
+    }
+  }
+</style>

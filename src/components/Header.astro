@@ -1,0 +1,234 @@
+---
+import Logo from './Logo.astro';
+import { withBase } from '../lib/base';
+
+const nav = [
+  { label: 'Paths', href: withBase('/paths') },
+  { label: 'Labs', href: withBase('/labs') },
+  { label: 'Reference', href: withBase('/reference') },
+];
+
+// Mark the active section (first path segment after the base).
+const path = Astro.url.pathname.replace(/\/+$/, '');
+const isActive = (href: string) => {
+  const seg = href.replace(/\/+$/, '');
+  return path === seg || path.startsWith(seg + '/');
+};
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href={withBase('/')} aria-label="RedSec home">
+      <Logo size={30} />
+      <span class="wordmark">RedSec</span>
+    </a>
+
+    <mobile-nav>
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Open menu"
+      >
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+      </button>
+
+      <nav id="primary-nav" class="primary-nav" aria-label="Primary">
+        <ul>
+          {
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class:list={['nav-link', { active: isActive(item.href) }]}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </mobile-nav>
+  </div>
+</header>
+
+<script>
+  // Small island: toggle the mobile menu. No framework, just a custom element.
+  class MobileNav extends HTMLElement {
+    connectedCallback() {
+      const btn = this.querySelector<HTMLButtonElement>('.nav-toggle');
+      const nav = this.querySelector<HTMLElement>('#primary-nav');
+      if (!btn || !nav) return;
+
+      const close = () => {
+        this.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Open menu');
+      };
+      const open = () => {
+        this.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Close menu');
+      };
+
+      btn.addEventListener('click', () => {
+        this.classList.contains('open') ? close() : open();
+      });
+
+      // Close on navigation / Escape / resize to desktop.
+      nav.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('a')) close();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+      });
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 720) close();
+      });
+    }
+  }
+  if (!customElements.get('mobile-nav')) {
+    customElements.define('mobile-nav', MobileNav);
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: var(--hairline);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+  }
+  .brand:hover {
+    text-decoration: none;
+  }
+  .wordmark {
+    line-height: 1;
+  }
+
+  .primary-nav ul {
+    list-style: none;
+    display: flex;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+  }
+  .nav-link {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 0.45rem 0.7rem;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    display: inline-block;
+  }
+  .nav-link:hover {
+    color: var(--text);
+    background: var(--elevated);
+    text-decoration: none;
+  }
+  .nav-link.active {
+    color: var(--text);
+    /* single-sided accent → square that edge */
+    border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom: 2px solid var(--red);
+  }
+
+  .nav-toggle {
+    display: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: var(--line);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .nav-toggle-bars,
+  .nav-toggle-bars::before,
+  .nav-toggle-bars::after {
+    content: '';
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    background: var(--text);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .nav-toggle-bars {
+    position: relative;
+  }
+  .nav-toggle-bars::before {
+    position: absolute;
+    top: -6px;
+  }
+  .nav-toggle-bars::after {
+    position: absolute;
+    top: 6px;
+  }
+
+  @media (max-width: 720px) {
+    .nav-toggle {
+      display: inline-flex;
+    }
+    .primary-nav {
+      position: absolute;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-bottom: var(--line);
+      display: none;
+    }
+    mobile-nav.open .primary-nav {
+      display: block;
+    }
+    .primary-nav ul {
+      flex-direction: column;
+      gap: 0;
+      padding: var(--space-2) var(--space-6) var(--space-4);
+    }
+    .nav-link {
+      display: block;
+      padding: 0.75rem 0;
+      border-bottom: var(--hairline);
+      border-radius: 0;
+    }
+    .nav-link.active {
+      border-bottom: var(--hairline);
+      color: var(--red-hover);
+    }
+    /* animate the toggle into an X when open */
+    mobile-nav.open .nav-toggle-bars {
+      background: transparent;
+    }
+    mobile-nav.open .nav-toggle-bars::before {
+      top: 0;
+      transform: rotate(45deg);
+    }
+    mobile-nav.open .nav-toggle-bars::after {
+      top: 0;
+      transform: rotate(-45deg);
+    }
+  }
+</style>

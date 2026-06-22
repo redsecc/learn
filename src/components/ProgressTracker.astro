@@ -1,0 +1,142 @@
+---
+// Lesson "Mark complete" control. Island backed by localStorage only.
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+---
+
+<progress-tracker class="progress-tracker" data-slug={slug}>
+  <button class="btn complete-btn" type="button" aria-pressed="false">
+    <span class="check" aria-hidden="true"></span>
+    <span class="label">Mark complete</span>
+  </button>
+  <div class="pt-aside">
+    <p class="saved-note mono">Progress saved on this device</p>
+    <button class="reset-btn mono" type="button">Reset progress</button>
+  </div>
+</progress-tracker>
+
+<script>
+  import {
+    isComplete,
+    setComplete,
+    resetProgress,
+    storageAvailable,
+    onChange,
+  } from '../scripts/progress';
+
+  class ProgressTracker extends HTMLElement {
+    connectedCallback() {
+      const slug = this.dataset.slug!;
+      const btn = this.querySelector<HTMLButtonElement>('.complete-btn')!;
+      const label = btn.querySelector<HTMLElement>('.label')!;
+      const reset = this.querySelector<HTMLButtonElement>('.reset-btn')!;
+      const note = this.querySelector<HTMLElement>('.saved-note')!;
+
+      if (!storageAvailable()) {
+        btn.disabled = true;
+        reset.hidden = true;
+        note.textContent = 'Progress tracking needs on-device storage (unavailable).';
+        return;
+      }
+
+      const render = () => {
+        const done = isComplete(slug);
+        btn.classList.toggle('is-complete', done);
+        btn.setAttribute('aria-pressed', String(done));
+        label.textContent = done ? 'Completed' : 'Mark complete';
+      };
+
+      btn.addEventListener('click', () => setComplete(slug, !isComplete(slug)));
+      reset.addEventListener('click', () => {
+        if (confirm('Reset all on-device progress? This cannot be undone.')) {
+          resetProgress();
+        }
+      });
+      onChange(render);
+      render();
+    }
+  }
+  if (!customElements.get('progress-tracker')) {
+    customElements.define('progress-tracker', ProgressTracker);
+  }
+</script>
+
+<style>
+  .progress-tracker {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-6);
+    background: var(--surface);
+    border: var(--hairline);
+    border-radius: var(--radius);
+  }
+  .complete-btn {
+    gap: var(--space-2);
+  }
+  .complete-btn .check {
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--text-muted);
+    border-radius: 3px;
+    flex: none;
+  }
+  .complete-btn.is-complete {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+  .complete-btn.is-complete:hover {
+    background: var(--red-hover);
+    border-color: var(--red-hover);
+  }
+  .complete-btn.is-complete .check {
+    background: #fff;
+    border-color: #fff;
+    position: relative;
+  }
+  .complete-btn.is-complete .check::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid var(--red);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .pt-aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .saved-note {
+    margin: 0;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  .reset-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .reset-btn:hover {
+    color: var(--red-hover);
+  }
+  @media (max-width: 520px) {
+    .pt-aside {
+      align-items: flex-start;
+    }
+  }
+</style>

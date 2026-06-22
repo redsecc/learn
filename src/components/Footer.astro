@@ -1,0 +1,104 @@
+---
+import { withBase } from '../lib/base';
+
+const year = new Date().getFullYear();
+
+// EDIT ME: community + source links.
+const links = [
+  { label: 'GitHub', href: 'https://github.com/redsecc/website' },
+  { label: 'Community', href: 'https://discord.gg/asm' },
+];
+
+const sections = [
+  { label: 'Paths', href: withBase('/paths') },
+  { label: 'Labs', href: withBase('/labs') },
+  { label: 'Reference', href: withBase('/reference') },
+];
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-about">
+      <p class="footer-tag">Free and open — no account required.</p>
+      <p class="footer-note">
+        RedSec sets no cookies, ships no analytics, and makes no third-party
+        requests. Your progress is stored only on this device.
+      </p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Sections">
+      {sections.map((s) => <a href={s.href}>{s.label}</a>)}
+    </nav>
+
+    <nav class="footer-nav" aria-label="Community">
+      {
+        links.map((l) => (
+          <a href={l.href} rel="noopener noreferrer" target="_blank">
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+
+  <div class="container footer-base">
+    <span>© {year} RedSec</span>
+    <span class="footer-disclaimer">
+      For authorized testing and education only.
+    </span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    flex-shrink: 0;
+    border-top: var(--hairline);
+    background: var(--surface);
+    margin-top: var(--space-24);
+  }
+  .footer-inner {
+    display: grid;
+    gap: var(--space-8);
+    padding-block: var(--space-12);
+  }
+  @media (min-width: 720px) {
+    .footer-inner {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+  }
+  .footer-tag {
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+  }
+  .footer-note {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    max-width: 34rem;
+    margin: 0;
+  }
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .footer-nav a {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .footer-nav a:hover {
+    color: var(--text);
+  }
+  .footer-base {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding-block: var(--space-4);
+    border-top: var(--hairline);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+// Self-hosted fonts — two weights each, no third-party (Google) requests.
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '../styles/global.css';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { withBase } from '../lib/base';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogType?: string;
+}
+
+const {
+  title,
+  description = 'RedSec is a free, open learning center for red teaming. No accounts, no trackers — one click from any lesson.',
+  ogType = 'website',
+} = Astro.props;
+
+const siteName = 'RedSec';
+const pageTitle = title ? `${title} · ${siteName}` : `${siteName} — learn to red team`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const favicon = withBase('/favicon.svg');
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- SVG favicon derived from the logo mark -->
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+    <meta name="theme-color" content="#0E0E0E" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- This site sets no cookies, ships no analytics, makes no third-party requests. -->
+    <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,65 @@
+---
+interface Props {
+  type?: 'note' | 'tip' | 'warning';
+  title?: string;
+}
+const { type = 'note', title } = Astro.props;
+
+const defaults: Record<string, string> = {
+  note: 'Note',
+  tip: 'Tip',
+  warning: 'Warning',
+};
+const label = title ?? defaults[type];
+---
+
+<aside class:list={['callout', `callout-${type}`]} role={type === 'warning' ? 'note' : undefined}>
+  <p class="callout-label mono">{label}</p>
+  <div class="callout-body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .callout {
+    /* single-sided left accent → square that edge (radius 0 on the left) */
+    border: var(--hairline);
+    border-left-width: 2px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: var(--surface);
+    padding: var(--space-4) var(--space-6);
+    margin: var(--space-6) 0;
+  }
+  .callout-label {
+    margin: 0 0 var(--space-2);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+  .callout-body :last-child {
+    margin-bottom: 0;
+  }
+  .callout-body :first-child {
+    margin-top: 0;
+  }
+
+  /* note + tip stay grayscale */
+  .callout-note {
+    border-left-color: var(--text-muted);
+  }
+  .callout-tip {
+    border-left-color: var(--text-secondary);
+  }
+  .callout-tip .callout-label {
+    color: var(--text-secondary);
+  }
+
+  /* only warning uses the red family */
+  .callout-warning {
+    border-left-color: var(--red);
+    background: color-mix(in srgb, var(--red-deep) 12%, var(--surface));
+  }
+  .callout-warning .callout-label {
+    color: var(--red-hover);
+  }
+</style>

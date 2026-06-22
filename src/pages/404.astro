@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/base';
+---
+
+<BaseLayout
+  title="404 — not found"
+  description="That page couldn't be found."
+>
+  <section class="notfound">
+    <div class="container nf-inner">
+      <p class="nf-code mono">404</p>
+      <h1>Access denied to a page that isn't here.</h1>
+      <p class="lead">
+        The path you requested returned nothing. It may have moved, or never
+        existed. No credentials would have helped — there's simply no resource
+        at this location.
+      </p>
+      <div class="nf-actions">
+        <a class="btn btn-primary" href={withBase('/')}>Back to home</a>
+        <a class="btn" href={withBase('/paths')}>Browse paths</a>
+      </div>
+      <pre class="nf-term mono" aria-hidden="true">$ curl -s {Astro.url.pathname}
+HTTP/1.1 404 Not Found</pre>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    display: flex;
+    align-items: center;
+    min-height: 60vh;
+    padding-block: var(--space-16);
+  }
+  .nf-inner {
+    max-width: var(--maxw-prose);
+  }
+  .nf-code {
+    color: var(--red);
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+    margin: 0 0 var(--space-4);
+  }
+  .nf-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+  .nf-term {
+    margin-top: var(--space-12);
+    padding: var(--space-4) var(--space-6);
+    background: var(--surface);
+    border: var(--hairline);
+    border-left: 2px solid var(--border);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    overflow-x: auto;
+  }
+</style>

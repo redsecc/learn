@@ -1,0 +1,95 @@
+---
+import { withBase } from '../lib/base';
+
+interface Props {
+  title: string;
+  summary: string;
+  slug: string;
+  icon?: string;
+  order?: number;
+  lessonCount?: number;
+}
+const { title, summary, slug, icon = '//', order, lessonCount } = Astro.props;
+const href = withBase(`/paths/${slug}`);
+---
+
+<a class="path-card" href={href}>
+  <div class="path-card-top">
+    <span class="path-mark mono" aria-hidden="true">{icon}</span>
+    {order != null && <span class="path-index mono">{String(order).padStart(2, '0')}</span>}
+  </div>
+  <h3 class="path-title">{title}</h3>
+  <p class="path-summary">{summary}</p>
+  <div class="path-card-foot">
+    {lessonCount != null && (
+      <span class="mono path-meta">
+        {lessonCount} {lessonCount === 1 ? 'lesson' : 'lessons'}
+      </span>
+    )}
+    <span class="path-go mono" aria-hidden="true">Start →</span>
+  </div>
+</a>
+
+<style>
+  .path-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    background: var(--surface);
+    border: var(--hairline);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    color: var(--text);
+    height: 100%;
+    transition: background 0.15s ease, border-color 0.15s ease,
+      transform 0.15s ease;
+  }
+  .path-card:hover {
+    background: var(--elevated);
+    border-color: var(--text-muted);
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+  .path-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .path-mark {
+    color: var(--red);
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  .path-index {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  .path-title {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .path-summary {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+  .path-card-foot {
+    margin-top: auto;
+    padding-top: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: var(--hairline);
+  }
+  .path-meta {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  .path-go {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+  }
+  .path-card:hover .path-go {
+    color: var(--red-hover);
+  }
+</style>

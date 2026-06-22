@@ -1,0 +1,22 @@
+{
+  "name": "redsec",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "RedSec — a free, open learning center for red teaming. Static, no accounts, no trackers.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^6.0.3",
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "astro": "^6.4.8",
+    "astro-expressive-code": "^0.43.1"
+  }
+}
