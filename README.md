@@ -1,132 +1,62 @@
-# RedSec
+# RedSec — learning platform (learn.redsec.cc)
 
-A free, open learning center for red teaming. Static site, **no accounts, no
-backend, no trackers** — anyone lands one click from a lesson.
+The RedSec learning site: a free, open, **GitBook-style** documentation app for
+offensive security. No accounts, no trackers. Built with Astro + MDX.
 
-- **Stack:** [Astro](https://astro.build) (static output), MDX content
-  collections, [Expressive Code](https://expressive-code.com) for code blocks,
-  self-hosted fonts ([Inter](https://fontsource.org/fonts/inter) +
-  [JetBrains Mono](https://fontsource.org/fonts/jetbrains-mono)).
-- **No third-party requests:** no Google Fonts CDN, no analytics, no cookies.
-- **Learner state:** progress is stored in `localStorage` only (key
-  `redsec:progress`) and is per-device — never synced to a server.
+> This is the `learn` site. The marketing/landing site (redsec.cc) lives on the
+> **`main` branch** of `redsecc/website`. Deploy this one from its own repo
+> (e.g. `redsecc/learn`) since GitHub Pages serves one site per repo.
 
-## Prerequisites
+## Structure
 
-- **Node.js 20 or newer** (Node 22 recommended)
-- npm (ships with Node)
+Docs are organized into **sections**, each a stack of MDX pages, rendered with a
+persistent left sidebar, an "on this page" TOC, and prev/next navigation.
 
-## Local development
+- Section metadata + ordering: `src/lib/docs.ts` (`SECTIONS`).
+- Content: `src/content/docs/<section>/<page>.mdx`.
+- Routes: `/` (landing), `/<section>` (section index), `/<section>/<page>` (doc).
+
+### Add a page
+
+1. Drop an MDX file in `src/content/docs/<section>/` with frontmatter:
+   ```yaml
+   ---
+   title: My page
+   order: 2
+   summary: One-line description.
+   ---
+   ```
+2. It appears in that section's sidebar and index automatically (ordered by
+   `order`), with prev/next wired across the whole docs set.
+
+### Add a section
+
+Add an entry to `SECTIONS` in `src/lib/docs.ts`, then create
+`src/content/docs/<new-section>/` with pages.
+
+Use `import Callout from '../../../components/Callout.astro'` for note/tip/warning
+callouts; fenced code blocks get copy buttons + terminal frames via Expressive
+Code.
+
+## Develop
 
 ```bash
-npm install      # install dependencies
-npm run dev      # start the dev server (http://localhost:4321)
-npm run build    # build the static site to ./dist
-npm run preview  # preview the production build locally
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # static output → ./dist
+npm run preview
 ```
 
-> The dev server respects the configured `base`, so it serves the site at the
-> same path the production build uses.
+## Deploy (learn.redsec.cc)
 
-## Content
+`astro.config.mjs` sets `site: https://learn.redsec.cc`; `public/CNAME` pins the
+domain; `.github/workflows/deploy.yml` builds + publishes via GitHub Pages.
 
-All content lives in `src/content/` as Astro content collections:
-
-| Collection  | Location                   | Format | Notes |
-| ----------- | -------------------------- | ------ | ----- |
-| `paths`     | `src/content/paths/`       | YAML   | Learning-path metadata (`title`, `slug`, `summary`, `order`, `icon`). |
-| `lessons`   | `src/content/lessons/`     | MDX    | `title`, `path` (a path slug), `order`, `difficulty`, `summary`, `tags`. |
-| `labs`      | `src/content/labs/`        | MDX    | `title`, `objective`, `difficulty`, optional `targetUrl`/`download`. Hints + solution in the body via `<details>`. |
-| `reference` | `src/content/reference/`   | MDX    | `title`, `summary`, `order`. |
-
-Schemas are defined and validated in `src/content.config.ts`.
-
-To add a lesson: drop a `.mdx` file in `src/content/lessons/`, set its
-frontmatter `path` to an existing path slug, and it appears automatically in
-that path (ordered by `order`) with prev/next navigation and progress tracking.
-
-## Deployment (GitHub Pages)
-
-This repo ships a workflow at `.github/workflows/deploy.yml` that builds with
-`withastro/action` and publishes via GitHub Pages.
-
-1. Push to the **`main`** branch (the workflow also supports manual
-   `workflow_dispatch`).
-2. In the repository, go to **Settings → Pages → Build and deployment →
-   Source: GitHub Actions**.
-3. The site deploys to the URL configured in `astro.config.mjs`.
-
-### `site` / `base` configuration
-
-`astro.config.mjs` is currently set up for a **custom domain**:
-
-```js
-site: 'https://redsec.cc',
-base: '/',
-```
-
-There's a `public/CNAME` file containing `redsec.cc`. In **Settings → Pages →
-Custom domain**, set `redsec.cc`, and create these DNS records with your
-registrar:
-
-| Type    | Host  | Value |
-| ------- | ----- | ----- |
-| `A`     | `@`   | `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` |
-| `CNAME` | `www` | `<USERNAME>.github.io` |
-
-(The four `A` records are GitHub Pages' apex IPs.) Enable **Enforce HTTPS**
-once the certificate is issued.
-
-#### Deploying somewhere other than `redsec.cc`
-
-The `site`/`base` values depend on **where** you deploy:
-
-- **Custom domain** (current setup): `site: 'https://your-domain'`,
-  `base: '/'`, and `public/CNAME` contains your domain.
-- **User/organization page** (`https://<USERNAME>.github.io`):
-  `site: 'https://<USERNAME>.github.io'`, `base: '/'`, and **delete**
-  `public/CNAME`.
-- **Project page** (`https://<USERNAME>.github.io/<REPO>`):
-  `site: 'https://<USERNAME>.github.io'`, `base: '/<REPO>'`, and **delete**
-  `public/CNAME`.
-
-Because `base` may be a subpath, **all internal links and assets go through the
-`withBase()` helper** in `src/lib/base.ts` (it reads `import.meta.env.BASE_URL`).
-Keep using it for new links so nothing breaks under a project subpath.
-
-`public/.nojekyll` is included so GitHub Pages serves files/folders that start
-with `_` (Astro's `_astro/` build output) without Jekyll processing.
-
-## Project structure
-
-```text
-.
-├─ .github/workflows/deploy.yml   # GitHub Pages build + deploy
-├─ astro.config.mjs               # site/base, integrations, EC theme
-├─ public/
-│  ├─ CNAME                       # custom domain (redsec.cc)
-│  ├─ .nojekyll
-│  └─ favicon.svg                 # derived from the logo mark
-└─ src/
-   ├─ assets/redsec_logo.svg      # the brand mark (see note below)
-   ├─ components/                 # Header, Footer, cards, Callout, TOC, islands
-   ├─ content/                    # paths / lessons / labs / reference
-   ├─ content.config.ts           # collection schemas
-   ├─ layouts/BaseLayout.astro
-   ├─ lib/base.ts                 # withBase() helper
-   ├─ pages/                      # routes
-   ├─ scripts/progress.ts         # localStorage progress (no server)
-   └─ styles/global.css           # design tokens + base styles
-```
-
-## Things to fill in
-
-- **Logo:** `src/assets/redsec_logo.svg` is currently a generated placeholder
-  mark in the brand red (`#B01927`). Drop in the real `redsec_logo.svg` at that
-  path to replace it everywhere (the header and `public/favicon.svg`).
-- **Community links:** the footer links to `https://github.com/redsecc/website`
-  and `https://discord.gg/asm` — edit them in `src/components/Footer.astro`.
+1. Push this branch as `main` to its own repo (`redsecc/learn`).
+2. Settings → Pages → Source: **GitHub Actions**.
+3. Settings → Pages → Custom domain: `learn.redsec.cc`, and add DNS:
+   `CNAME  learn → redsecc.github.io`.
 
 ## License
 
-[MIT](./LICENSE). Educational content for **authorized testing only**.
+[MIT](./LICENSE). For **authorized testing and education only**.

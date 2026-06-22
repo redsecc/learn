@@ -1,0 +1,57 @@
+---
+title: Recon and scoping
+order: 2
+summary: Map a target's attack surface — subdomains, content, parameters, and stack.
+tags: [recon, enumeration]
+---
+
+import Callout from '../../../components/Callout.astro';
+
+You can't exploit what you haven't found. Most real findings come from surface
+the defenders forgot about — old endpoints, staging hosts, hidden parameters.
+
+## Enumerate subdomains
+
+Passive sources give you hostnames without touching the target:
+
+```bash title="Passive subdomain enumeration"
+subfinder -d example.com -silent | tee subs.txt
+```
+
+Then resolve which are live:
+
+```bash title="Probe for live hosts"
+cat subs.txt | httpx -silent -status-code -title
+```
+
+## Discover content
+
+Crawl and brute-force for hidden paths and parameters:
+
+```bash title="Content discovery"
+ffuf -u https://example.com/FUZZ \
+     -w /usr/share/seclists/Discovery/Web-Content/raw.txt \
+     -mc 200,204,301,302,401,403
+```
+
+<Callout type="tip" title="Read before you fuzz">
+  View source, walk the JavaScript bundles, and read
+  <code>robots.txt</code>/<code>sitemap.xml</code>. Apps leak endpoint and
+  parameter names in client-side code constantly.
+</Callout>
+
+## Fingerprint the stack
+
+```bash title="Fingerprinting"
+whatweb https://example.com
+```
+
+Knowing the framework, server, and CMS tells you which bug classes to prioritize.
+
+<Callout type="warning" title="Stay in scope">
+  Recon tools wander easily onto third-party infrastructure. Confirm every host
+  is in the program's scope before you send requests.
+</Callout>
+
+Keep a living map of hosts, endpoints, inputs, and trust boundaries — then start
+hunting [bug classes](/finding-vulnerabilities/methodology).

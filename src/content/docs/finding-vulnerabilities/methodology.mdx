@@ -1,0 +1,40 @@
+---
+title: A repeatable methodology
+order: 1
+summary: Turn "poke around and hope" into a process that consistently finds bugs.
+tags: [methodology, process]
+---
+
+import Callout from '../../../components/Callout.astro';
+
+Finding vulnerabilities is less about luck and more about a process you repeat
+on every target. The bugs change; the loop doesn't.
+
+## The loop
+
+1. **Map** the attack surface — every host, endpoint, and input.
+   (See [recon](/bug-bounties/recon).)
+2. **Understand** the app — what it does, who the users are, where trust
+   boundaries sit (auth, roles, payment, data ownership).
+3. **Hypothesize** — for each input and boundary, ask "what does the developer
+   assume here, and what happens if I break that assumption?"
+4. **Test** one assumption at a time and compare responses.
+5. **Escalate** — chain small flaws into real impact.
+6. **Document** as you go.
+
+## Where bugs live
+
+Most web vulnerabilities fall into a few buckets:
+
+- **Broken access control** — missing ownership/role checks
+  (see [IDOR](/finding-vulnerabilities/idor)).
+- **Injection** — input interpreted as code
+  (see [SQL injection](/finding-vulnerabilities/sql-injection)).
+- **Authentication & session flaws** — weak resets, token handling, MFA gaps.
+- **Business-logic flaws** — abusing valid features in unintended sequences.
+
+<Callout type="tip" title="Track your assumptions">
+  Keep a checklist per endpoint: inputs tried, methods tried, roles tested. Bugs
+  hide in the combination you haven't tried yet — usually a different HTTP method
+  or a second user's identifier.
+</Callout>

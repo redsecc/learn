@@ -1,0 +1,135 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { getDocsBySection, pageSlugOf } from '../../lib/docs';
+import { withBase } from '../../lib/base';
+import { abs, breadcrumb } from '../../lib/seo';
+
+export async function getStaticPaths() {
+  const groups = await getDocsBySection();
+  return groups.map(({ section, pages }) => ({
+    params: { section: section.slug },
+    props: { section, pages },
+  }));
+}
+
+const { section, pages } = Astro.props;
+
+const jsonLd = [
+  {
+    '@type': 'CollectionPage',
+    name: section.title,
+    description: section.summary,
+    url: abs(`/${section.slug}`),
+    hasPart: pages.map((p) => ({
+      '@type': 'TechArticle',
+      name: p.data.title,
+      url: abs(`/${section.slug}/${pageSlugOf(p.id)}`),
+    })),
+  },
+  breadcrumb([{ name: section.title, path: `/${section.slug}` }]),
+];
+---
+
+<DocsLayout
+  title={section.title}
+  description={section.summary}
+  currentSection={section.slug}
+  jsonLd={jsonLd}
+>
+  <nav class="crumbs mono" aria-label="Breadcrumb">
+    <a href={withBase('/')}>docs</a>
+    <span aria-hidden="true">/</span>
+    <span>{section.slug}</span>
+  </nav>
+
+  <header class="sec-head">
+    <span class="eyebrow">Section</span>
+    <h1>{section.title}</h1>
+    <p class="lead">{section.summary}</p>
+  </header>
+
+  <ol class="page-list">
+    {
+      pages.map((p, i) => (
+        <li>
+          <a class="page-row" href={withBase(`/${section.slug}/${pageSlugOf(p.id)}`)}>
+            <span class="page-num mono">{String(i + 1).padStart(2, '0')}</span>
+            <span class="page-body">
+              <span class="page-title">{p.data.title}</span>
+              {p.data.summary && <span class="page-summary">{p.data.summary}</span>}
+            </span>
+            <span class="page-go mono" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</DocsLayout>
+
+<style>
+  .crumbs {
+    display: flex;
+    gap: var(--space-2);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-6);
+  }
+  .crumbs a {
+    color: var(--text-secondary);
+  }
+  .sec-head {
+    margin-bottom: var(--space-8);
+  }
+  .sec-head h1 {
+    margin-bottom: var(--space-4);
+  }
+  .page-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .page-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    background: var(--surface);
+    border: var(--hairline);
+    border-radius: var(--radius);
+    padding: var(--space-4) var(--space-6);
+    color: var(--text);
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .page-row:hover {
+    background: var(--elevated);
+    border-color: var(--text-muted);
+    text-decoration: none;
+  }
+  .page-num {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  .page-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .page-title {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .page-summary {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+  }
+  .page-go {
+    color: var(--text-muted);
+  }
+  .page-row:hover .page-go {
+    color: var(--red-hover);
+  }
+</style>

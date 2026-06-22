@@ -1,0 +1,123 @@
+---
+import { getDocsBySection, pageSlugOf } from '../lib/docs';
+import { withBase } from '../lib/base';
+
+interface Props {
+  current?: string; // current doc id, e.g. "ctfs/intro"
+  currentSection?: string; // active section slug (for section index pages)
+}
+const { current, currentSection } = Astro.props;
+const groups = await getDocsBySection();
+---
+
+<nav class="docs-sidebar" aria-label="Documentation">
+  <details class="ds-details" open>
+    <summary class="ds-summary mono">Documentation</summary>
+    <div class="ds-body">
+      {
+        groups.map(({ section, pages }) => (
+          <div class="ds-group">
+            <a
+              class:list={['ds-section', { active: section.slug === currentSection }]}
+              href={withBase(`/${section.slug}`)}
+            >
+              {section.title}
+            </a>
+            <ul>
+              {pages.map((p) => (
+                <li>
+                  <a
+                    class:list={['ds-link', { active: p.id === current }]}
+                    href={withBase(`/${section.slug}/${pageSlugOf(p.id)}`)}
+                    aria-current={p.id === current ? 'page' : undefined}
+                  >
+                    {p.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </details>
+</nav>
+
+<style>
+  .docs-sidebar {
+    position: sticky;
+    top: 5rem;
+    font-size: 0.9rem;
+  }
+  .ds-summary {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-4);
+    list-style: none;
+    cursor: default;
+    pointer-events: none;
+  }
+  .ds-summary::-webkit-details-marker {
+    display: none;
+  }
+  .ds-group {
+    margin-bottom: var(--space-6);
+  }
+  .ds-section {
+    display: block;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: var(--space-2);
+  }
+  .ds-section.active {
+    color: var(--red-hover);
+  }
+  .ds-section:hover {
+    color: var(--red-hover);
+    text-decoration: none;
+  }
+  .docs-sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: var(--hairline);
+  }
+  .ds-link {
+    display: block;
+    padding: 0.3rem 0 0.3rem var(--space-4);
+    margin-left: -1px;
+    border-left: 1px solid transparent;
+    color: var(--text-secondary);
+    line-height: 1.35;
+  }
+  .ds-link:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .ds-link.active {
+    color: var(--red-hover);
+    border-left-color: var(--red);
+  }
+
+  /* Collapsible on mobile, always-open on desktop. */
+  @media (max-width: 900px) {
+    .docs-sidebar {
+      position: static;
+      border: var(--hairline);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+    }
+    .ds-summary {
+      cursor: pointer;
+      pointer-events: auto;
+      margin-bottom: 0;
+    }
+    .ds-summary::-webkit-details-marker {
+      display: revert;
+    }
+    .ds-details[open] .ds-summary {
+      margin-bottom: var(--space-4);
+    }
+  }
+</style>

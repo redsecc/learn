@@ -1,0 +1,44 @@
+---
+title: Writing a report that pays
+order: 3
+summary: A good report is half the work — clear repro, real impact, and a fix.
+tags: [reporting, communication]
+---
+
+import Callout from '../../../components/Callout.astro';
+
+A valid bug with a bad report gets downgraded or closed. A clear report gets
+triaged fast and paid well. Triagers read dozens a day — make yours easy.
+
+## The anatomy of a good report
+
+- **Title** — the bug class and where: "IDOR in `/api/invoices/{id}` exposes
+  other users' invoices".
+- **Summary** — one or two sentences: what, where, and why it matters.
+- **Steps to reproduce** — numbered, copy-pasteable, from a clean state. Include
+  exact requests.
+- **Impact** — what an attacker actually gains. Tie it to the business.
+- **Proof** — minimal evidence (a redacted response, a screenshot). Don't
+  over-collect real data.
+- **Remediation** — a concrete fix suggestion shows you understand the bug.
+
+## Example repro
+
+```http title="Steps to reproduce — request"
+GET /api/invoices/1042 HTTP/1.1
+Host: app.example.com
+Cookie: session=<your-session>
+```
+
+> As user B, requesting user A's invoice id returns A's data — no ownership
+> check is enforced.
+
+<Callout type="tip" title="Right-size the severity">
+  Map impact to CVSS honestly. Inflating severity wastes the triager's time and
+  hurts your reputation; a well-argued realistic severity builds trust.
+</Callout>
+
+<Callout type="warning" title="Minimize harm">
+  Prove impact with the least access necessary. Never exfiltrate real user data,
+  pivot further than needed, or test destructive actions on production.
+</Callout>

@@ -1,18 +1,19 @@
 ---
 import { withBase } from '../lib/base';
+import { SITE } from '../lib/site';
 
 const year = new Date().getFullYear();
 
-// EDIT ME: community + source links.
 const links = [
-  { label: 'GitHub', href: 'https://github.com/redsecc/website' },
-  { label: 'Community', href: 'https://discord.gg/k6p98bYkgH' },
+  { label: 'GitHub', href: SITE.social.github },
+  { label: 'Community', href: SITE.social.discord },
 ];
 
 const sections = [
-  { label: 'Paths', href: withBase('/paths') },
-  { label: 'Labs', href: withBase('/labs') },
-  { label: 'Reference', href: withBase('/reference') },
+  { label: 'CTFs', href: withBase('/ctfs') },
+  { label: 'Bug bounties', href: withBase('/bug-bounties') },
+  { label: 'Finding vulns', href: withBase('/finding-vulnerabilities') },
+  { label: 'redsec.cc', href: 'https://redsec.cc' },
 ];
 ---
 

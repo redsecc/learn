@@ -1,0 +1,43 @@
+---
+title: Getting started in bug bounty
+order: 1
+summary: How bug bounty works, the mindset, and how to read a program's scope.
+tags: [bug-bounty, intro]
+---
+
+import Callout from '../../../components/Callout.astro';
+
+Bug bounty is getting paid to find and report vulnerabilities in real systems —
+legally, under a program's rules. It's the closest thing to professional offense
+you can do from your laptop.
+
+## How it works
+
+1. A company publishes a **program** with a scope, rules, and reward table.
+2. You test only what's in scope, following the rules.
+3. You report a valid bug with clear reproduction steps and impact.
+4. If it's accepted, you get paid (a *bounty*) and/or reputation points.
+
+Platforms like HackerOne, Bugcrowd, Intigriti, and YesWeHack host programs;
+some companies run their own.
+
+## Read the scope first
+
+The scope is the contract. Before sending a single request, know:
+
+- **In-scope assets** — exact domains, apps, IP ranges, mobile apps.
+- **Out-of-scope** — what's off-limits (and often what bugs won't be paid).
+- **Rules** — rate limits, no social engineering, no DoS, test accounts only.
+
+<Callout type="warning" title="Out of scope means off-limits">
+  Testing assets that aren't in scope isn't bug hunting — it's unauthorized
+  access. Stay strictly inside the program's defined boundaries.
+</Callout>
+
+## Mindset
+
+Volume of low-quality reports gets you nowhere. Pick a target, learn it deeply,
+and chase *impact*. The workflow that follows —
+[recon](/bug-bounties/recon) then hunting specific
+[bug classes](/finding-vulnerabilities/methodology) — is how consistent hunters
+operate.

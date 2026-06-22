@@ -1,0 +1,43 @@
+---
+title: Intro to CTFs
+order: 1
+summary: What capture-the-flag is, the common formats and categories, and where to play.
+tags: [ctf, intro]
+---
+
+import Callout from '../../../components/Callout.astro';
+
+A **CTF** (capture the flag) is a security competition where you solve
+challenges to recover a hidden string — the *flag*, usually shaped like
+`redsec{...}` — and submit it for points. CTFs are the fastest way to build
+real skills because every challenge is a self-contained, legal target.
+
+## Formats
+
+- **Jeopardy** — a board of categorized challenges, each worth points. Solve
+  independently, hardest are worth most. Most online CTFs are jeopardy-style.
+- **Attack–defense** — each team runs identical vulnerable services, patches
+  their own, and exploits everyone else's. Live and intense.
+
+## Common categories
+
+- **Web** — exploit web apps (injection, auth, logic). See
+  [finding vulnerabilities](/finding-vulnerabilities/methodology).
+- **Pwn / binary exploitation** — memory-corruption bugs in native binaries.
+- **Reversing** — understand a binary to recover logic or a key.
+- **Crypto** — break flawed cryptographic implementations.
+- **Forensics** — recover artifacts from files, memory, or network captures.
+- **Misc / OSINT** — everything else.
+
+## Where to play
+
+- [picoCTF](https://picoctf.org/) — beginner-friendly, always available.
+- [CTFtime](https://ctftime.org/) — calendar of live competitions and team rankings.
+
+<Callout type="tip" title="Work in the open">
+  Read other people's writeups after a CTF ends — comparing your approach to a
+  cleaner solution is where most of the learning happens.
+</Callout>
+
+Ready for a worked example? Try the
+[Linux privesc: SUID](/ctfs/linux-privesc-suid) challenge.

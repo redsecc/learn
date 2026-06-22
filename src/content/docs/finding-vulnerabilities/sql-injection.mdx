@@ -1,0 +1,64 @@
+---
+title: SQL injection
+order: 3
+summary: When input reaches a query unsanitized, you can change what the query means.
+tags: [sqli, injection, databases]
+---
+
+import Callout from '../../../components/Callout.astro';
+
+**SQL injection (SQLi)** happens when untrusted input is concatenated into a SQL
+query, letting you alter the query's structure rather than just its data.
+
+## Why it happens
+
+```sql title="Vulnerable query"
+SELECT * FROM users WHERE username = '$user' AND password = '$pass';
+```
+
+If `$user` is `admin' --`, it becomes:
+
+```sql title="Injected query"
+SELECT * FROM users WHERE username = 'admin' -- ' AND password = '';
+```
+
+The `--` comments out the password check and you're logged in as `admin`.
+
+## Detect it
+
+A single quote that changes the response is the first signal. A lower-noise
+method is **boolean-based** testing — compare an always-true vs always-false
+condition:
+
+```text title="True vs false"
+id=10 AND 1=1     -- normal
+id=10 AND 1=2     -- differs → likely injectable
+```
+
+## Extract with UNION
+
+When results are reflected, find the column count, then pull data:
+
+```sql title="Columns, then extraction"
+' ORDER BY 3 -- -
+' UNION SELECT username, password, NULL FROM users -- -
+```
+
+<Callout type="tip" title="Automate after you confirm">
+  Once a parameter is confirmed injectable, <code>sqlmap</code> automates
+  fingerprinting and extraction — but learn the manual technique first.
+</Callout>
+
+## The fix: parameterized queries
+
+```python title="Safe — parameterized"
+cur.execute(
+    "SELECT * FROM users WHERE username = %s AND password = %s",
+    (user, password),
+)
+```
+
+<Callout type="warning" title="Injection can be destructive">
+  Prefer read-only proofs; never run destructive statements against data you
+  don't own.
+</Callout>

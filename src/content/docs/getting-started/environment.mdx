@@ -1,0 +1,45 @@
+---
+title: Your environment
+order: 2
+summary: A minimal, safe setup to follow along — VM, tooling, and a local lab.
+tags: [setup, tooling]
+---
+
+import Callout from '../../../components/Callout.astro';
+
+You don't need much to get started — a Linux box with the standard offensive
+tooling and somewhere safe to practice.
+
+## A working box
+
+The easiest path is a dedicated VM. [Kali](https://www.kali.org/) and
+[Parrot](https://parrotsec.org/) ship most tools preinstalled, but any Linux
+distro works if you install what you need.
+
+```bash title="A reasonable baseline on Debian/Ubuntu"
+sudo apt update
+sudo apt install -y nmap ffuf gobuster netcat-traditional jq python3-pip git
+pipx install sqlmap   # or apt install sqlmap
+```
+
+## A safe place to practice
+
+Never test against systems you don't own. Spin up intentionally-vulnerable
+targets locally instead:
+
+```bash title="OWASP Juice Shop (web)"
+docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop
+```
+
+For boxes and CTFs, platforms like Hack The Box, TryHackMe, and
+[picoCTF](https://picoctf.org/) give you legal targets on demand.
+
+<Callout type="tip" title="Keep it isolated">
+  Run practice targets bound to <code>127.0.0.1</code> or on a host-only network
+  so nothing is exposed to the internet.
+</Callout>
+
+## Next
+
+Pick a track: [CTFs](/ctfs/intro), [bug bounties](/bug-bounties/getting-started),
+or [finding vulnerabilities](/finding-vulnerabilities/methodology).
