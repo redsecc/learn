@@ -2,17 +2,17 @@
 title: "Caching and sensitive data"
 order: 17
 summary: "Learn Caching and sensitive data through a safe, repeatable web security workflow."
-tags: ["web-security","caching","core","lab"]
-level: core
-kind: lab
-duration: "30 min"
+tags: ["web-security","caching","intro","tutorial"]
+level: intro
+kind: tutorial
+duration: "20 min"
 ---
 
 import Callout from '../../../components/Callout.astro';
 
 {/* generated-learning-content */}
 
-This lab is part of the **Web security** track. It focuses on **Caching and sensitive data** as a practical skill you can apply in labs, CTFs, and authorized assessments.
+This tutorial is part of the **Web security** track. It focuses on **Caching and sensitive data** as a practical skill you can apply in labs, CTFs, and authorized assessments.
 
 <Callout type="warning" title="Practice only where authorized">
   Use this material only in your own lab, a CTF, or an environment where you have explicit permission. Keep proofs minimal, reversible, and respectful of real users.
@@ -29,6 +29,12 @@ This lab is part of the **Web security** track. It focuses on **Caching and sens
 Caching and sensitive data is useful when you can explain the system in front of you before you touch it. Start by naming the asset, the user, the trust boundary, and the expected control. Then compare the expected behavior with what the system actually does.
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
+
+## Technique focus
+
+- Map the request, user, server-side state, and trust boundary before changing input.
+- Compare normal behavior to one changed variable at a time.
+- Prefer non-destructive proofs with test-owned data.
 
 ## Safe practice workflow
 

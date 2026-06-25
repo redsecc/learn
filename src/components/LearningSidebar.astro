@@ -15,35 +15,41 @@ const groups = await getLessonsBySection();
     <summary class="ds-summary mono">Learning library</summary>
     <div class="ds-body">
       {
-        groups.map(({ section, pages }) => (
-          <details class="ds-group" open={section.slug === currentSection}>
-            <summary
-              class:list={['ds-section', { active: section.slug === currentSection }]}
-            >
+        groups.map(({ section, pages }) => {
+          const active = section.slug === currentSection;
+          return active ? (
+            <details class="ds-group" open>
+              <summary class="ds-section active">
+                <span>{section.title}</span>
+                <span class="ds-count mono">{pages.length}</span>
+              </summary>
+              <a
+                class:list={['ds-link', 'ds-overview', { active: !current }]}
+                href={withBase(`/${section.slug}`)}
+              >
+                Overview
+              </a>
+              <ul>
+                {pages.map((p) => (
+                  <li>
+                    <a
+                      class:list={['ds-link', { active: p.id === current }]}
+                      href={withBase(`/${section.slug}/${pageSlugOf(p.id)}`)}
+                      aria-current={p.id === current ? 'page' : undefined}
+                    >
+                      {p.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ) : (
+            <a class="ds-group ds-section-link" href={withBase(`/${section.slug}`)}>
               <span>{section.title}</span>
               <span class="ds-count mono">{pages.length}</span>
-            </summary>
-            <a
-              class:list={['ds-link', 'ds-overview', { active: section.slug === currentSection && !current }]}
-              href={withBase(`/${section.slug}`)}
-            >
-              Overview
             </a>
-            <ul>
-              {pages.map((p) => (
-                <li>
-                  <a
-                    class:list={['ds-link', { active: p.id === current }]}
-                    href={withBase(`/${section.slug}/${pageSlugOf(p.id)}`)}
-                    aria-current={p.id === current ? 'page' : undefined}
-                  >
-                    {p.data.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </details>
-        ))
+          );
+        })
       }
     </div>
   </details>
@@ -79,6 +85,18 @@ const groups = await getLessonsBySection();
   .ds-group {
     border-bottom: var(--hairline);
     padding-bottom: var(--space-2);
+  }
+  .ds-section-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    color: var(--text-secondary);
+    padding: 0.35rem 0 var(--space-2);
+  }
+  .ds-section-link:hover {
+    color: var(--text);
+    text-decoration: none;
   }
   .ds-section {
     display: flex;

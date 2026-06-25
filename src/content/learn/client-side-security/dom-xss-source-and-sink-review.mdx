@@ -30,6 +30,12 @@ DOM XSS source and sink review is useful when you can explain the system in fron
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
 
+## Technique focus
+
+- Name the source, sink, browser context, and encoding boundary before writing a proof.
+- Use owned test content and verify whether the issue is reflected, stored, DOM-based, or mutation-driven.
+- Recommend contextual output encoding, sanitizer review, CSP as defense-in-depth, and regression tests.
+
 ## Safe practice workflow
 
 1. Define the target and confirm it is allowed.

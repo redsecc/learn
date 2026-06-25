@@ -2,17 +2,17 @@
 title: "Safe proof of concept design"
 order: 16
 summary: "Learn Safe proof of concept design through a safe, repeatable bug bounties workflow."
-tags: ["bug-bounties","safe","core","tutorial"]
-level: core
-kind: tutorial
-duration: "20 min"
+tags: ["bug-bounties","safe","intro","reference"]
+level: intro
+kind: reference
+duration: "12 min"
 ---
 
 import Callout from '../../../components/Callout.astro';
 
 {/* generated-learning-content */}
 
-This tutorial is part of the **Bug bounties** track. It focuses on **Safe proof of concept design** as a practical skill you can apply in labs, CTFs, and authorized assessments.
+This reference is part of the **Bug bounties** track. It focuses on **Safe proof of concept design** as a practical skill you can apply in labs, CTFs, and authorized assessments.
 
 <Callout type="warning" title="Practice only where authorized">
   Use this material only in your own lab, a CTF, or an environment where you have explicit permission. Keep proofs minimal, reversible, and respectful of real users.
@@ -29,6 +29,12 @@ This tutorial is part of the **Bug bounties** track. It focuses on **Safe proof 
 Safe proof of concept design is useful when you can explain the system in front of you before you touch it. Start by naming the asset, the user, the trust boundary, and the expected control. Then compare the expected behavior with what the system actually does.
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
+
+## Technique focus
+
+- Define what "Safe proof of concept design" means in this track before using a tool.
+- List the observable signal that would prove the idea is relevant.
+- Write the safe lab boundary and stop condition before testing.
 
 ## Safe practice workflow
 

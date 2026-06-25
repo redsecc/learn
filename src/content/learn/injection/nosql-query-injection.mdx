@@ -2,8 +2,8 @@
 title: "NoSQL query injection"
 order: 14
 summary: "Learn NoSQL query injection through a safe, repeatable injection workflow."
-tags: ["injection","nosql","core","tutorial"]
-level: core
+tags: ["injection","nosql","intro","tutorial"]
+level: intro
 kind: tutorial
 duration: "20 min"
 ---
@@ -29,6 +29,12 @@ This tutorial is part of the **Injection** track. It focuses on **NoSQL query in
 NoSQL query injection is useful when you can explain the system in front of you before you touch it. Start by naming the asset, the user, the trust boundary, and the expected control. Then compare the expected behavior with what the system actually does.
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
+
+## Technique focus
+
+- Identify the interpreter boundary: SQL, shell, template, parser, or serializer.
+- Use read-only probes and compare expected vs observed behavior.
+- Finish by naming the safe construction pattern that removes the injection class.
 
 ## Safe practice workflow
 

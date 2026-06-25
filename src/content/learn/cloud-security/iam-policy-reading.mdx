@@ -30,6 +30,12 @@ IAM policy reading is useful when you can explain the system in front of you bef
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
 
+## Technique focus
+
+- Use an owned sandbox account and inventory principals, resources, policies, and logs.
+- Trace the exact trust relationship that permits or blocks the action.
+- Close with least privilege, explicit deny conditions, monitoring, and cleanup steps.
+
 ## Safe practice workflow
 
 1. Define the target and confirm it is allowed.

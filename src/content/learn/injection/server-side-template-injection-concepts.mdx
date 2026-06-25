@@ -30,6 +30,12 @@ Server-side template injection concepts is useful when you can explain the syste
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
 
+## Technique focus
+
+- Identify the template engine, data context, escaping mode, and sandbox boundary.
+- Start with inert expressions in a lab and avoid destructive engine features.
+- Fix by removing template control from users, isolating render contexts, and validating safe template data.
+
 ## Safe practice workflow
 
 1. Define the target and confirm it is allowed.

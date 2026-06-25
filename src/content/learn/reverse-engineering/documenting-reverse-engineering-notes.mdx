@@ -2,10 +2,10 @@
 title: "Documenting reverse engineering notes"
 order: 19
 summary: "Learn Documenting reverse engineering notes through a safe, repeatable reverse engineering workflow."
-tags: ["reverse-engineering","documenting","advanced","tutorial"]
-level: advanced
+tags: ["reverse-engineering","documenting","core","tutorial"]
+level: core
 kind: tutorial
-duration: "35 min"
+duration: "20 min"
 ---
 
 import Callout from '../../../components/Callout.astro';
@@ -29,6 +29,12 @@ This tutorial is part of the **Reverse engineering** track. It focuses on **Docu
 Documenting reverse engineering notes is useful when you can explain the system in front of you before you touch it. Start by naming the asset, the user, the trust boundary, and the expected control. Then compare the expected behavior with what the system actually does.
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
+
+## Technique focus
+
+- Separate static evidence from dynamic evidence in your notes.
+- Name the input, transformation, comparison, and success condition.
+- Keep dynamic analysis inside an isolated VM or sandbox.
 
 ## Safe practice workflow
 

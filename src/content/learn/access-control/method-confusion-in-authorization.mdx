@@ -2,8 +2,8 @@
 title: "Method confusion in authorization"
 order: 14
 summary: "Learn Method confusion in authorization through a safe, repeatable access control workflow."
-tags: ["access-control","method","core","tutorial"]
-level: core
+tags: ["access-control","method","intro","tutorial"]
+level: intro
 kind: tutorial
 duration: "20 min"
 ---
@@ -29,6 +29,12 @@ This tutorial is part of the **Access control** track. It focuses on **Method co
 Method confusion in authorization is useful when you can explain the system in front of you before you touch it. Start by naming the asset, the user, the trust boundary, and the expected control. Then compare the expected behavior with what the system actually does.
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
+
+## Technique focus
+
+- Create at least two test users and write the expected ownership rule.
+- Compare horizontal and vertical access separately.
+- Capture only the minimum evidence needed to prove the authorization gap.
 
 ## Safe practice workflow
 

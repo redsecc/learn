@@ -2,10 +2,10 @@
 title: "Testing API authorization"
 order: 19
 summary: "Learn Testing API authorization through a safe, repeatable api security workflow."
-tags: ["api-security","testing","advanced","tutorial"]
-level: advanced
+tags: ["api-security","testing","core","tutorial"]
+level: core
 kind: tutorial
-duration: "35 min"
+duration: "20 min"
 ---
 
 import Callout from '../../../components/Callout.astro';
@@ -29,6 +29,12 @@ This tutorial is part of the **API security** track. It focuses on **Testing API
 Testing API authorization is useful when you can explain the system in front of you before you touch it. Start by naming the asset, the user, the trust boundary, and the expected control. Then compare the expected behavior with what the system actually does.
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
+
+## Technique focus
+
+- Inventory endpoint, method, object, caller role, and response shape.
+- Use schema or traffic evidence to decide what the API promises.
+- Test object ownership and role boundaries before testing edge cases.
 
 ## Safe practice workflow
 

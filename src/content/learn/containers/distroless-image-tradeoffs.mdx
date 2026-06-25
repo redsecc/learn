@@ -1,0 +1,62 @@
+---
+title: "Distroless image tradeoffs"
+order: 25
+summary: "Learn Distroless image tradeoffs through a safe, repeatable containers workflow."
+tags: ["containers","distroless","core","tutorial"]
+level: core
+kind: tutorial
+duration: "20 min"
+---
+
+import Callout from '../../../components/Callout.astro';
+
+{/* generated-learning-content */}
+
+This tutorial is part of the **Containers** track. It focuses on **Distroless image tradeoffs** as a practical skill you can apply in labs, CTFs, and authorized assessments.
+
+<Callout type="warning" title="Practice only where authorized">
+  Use this material only in your own lab, a CTF, or an environment where you have explicit permission. Keep proofs minimal, reversible, and respectful of real users.
+</Callout>
+
+## What you will learn
+
+- read image and runtime configuration
+- separate container risk from host risk
+- spot common deployment mistakes
+
+## The core idea
+
+Distroless image tradeoffs is useful when you can explain the system in front of you before you touch it. Start by naming the asset, the user, the trust boundary, and the expected control. Then compare the expected behavior with what the system actually does.
+
+For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
+
+## Technique focus
+
+- Define what "Distroless image tradeoffs" means in this track before using a tool.
+- List the observable signal that would prove the idea is relevant.
+- Write the safe lab boundary and stop condition before testing.
+
+## Safe practice workflow
+
+1. Define the target and confirm it is allowed.
+2. Create or choose test data that belongs to you.
+3. Record the normal behavior before changing inputs or state.
+4. Change one variable at a time and compare the response.
+5. Save only the evidence needed to explain the behavior.
+6. Write the likely fix or defensive control in plain language.
+
+<Callout type="tip" title="Lab exercise">
+  Use local containers and disposable clusters. Keep images small, avoid privileged mode, and write down which boundary you are testing.
+</Callout>
+
+## Checklist
+
+- Can you describe the security boundary without naming a tool?
+- Do you have a clean baseline request, file, log entry, or screenshot?
+- Did you avoid destructive actions and real user data?
+- Can another learner reproduce your observation from your notes?
+- Can you state the impact and the fix in one paragraph?
+
+## Checkpoint
+
+Before moving on, write three lines in your notes: what you expected, what you observed, and what you would test next. That habit matters more than memorizing a payload because it scales across targets and technologies.

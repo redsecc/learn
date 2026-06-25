@@ -2,10 +2,10 @@
 title: "Web app attack surface mapping"
 order: 19
 summary: "Learn Web app attack surface mapping through a safe, repeatable web security workflow."
-tags: ["web-security","web","advanced","tutorial"]
-level: advanced
+tags: ["web-security","web","core","tutorial"]
+level: core
 kind: tutorial
-duration: "35 min"
+duration: "20 min"
 ---
 
 import Callout from '../../../components/Callout.astro';
@@ -29,6 +29,12 @@ This tutorial is part of the **Web security** track. It focuses on **Web app att
 Web app attack surface mapping is useful when you can explain the system in front of you before you touch it. Start by naming the asset, the user, the trust boundary, and the expected control. Then compare the expected behavior with what the system actually does.
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
+
+## Technique focus
+
+- Map the request, user, server-side state, and trust boundary before changing input.
+- Compare normal behavior to one changed variable at a time.
+- Prefer non-destructive proofs with test-owned data.
 
 ## Safe practice workflow
 

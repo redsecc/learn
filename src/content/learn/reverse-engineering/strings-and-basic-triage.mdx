@@ -30,6 +30,12 @@ Strings and basic triage is useful when you can explain the system in front of y
 
 For this topic, write a one-sentence claim before testing: "I expect this control to stop this user from doing this action." If the evidence contradicts the claim, you have something worth investigating. If it matches, record the result and move on.
 
+## Technique focus
+
+- Separate static evidence, dynamic evidence, inputs, comparisons, and success conditions.
+- Keep dynamic analysis inside an isolated VM or emulator and snapshot before changing behavior.
+- Write notes that map functions, strings, branches, and patches back to the original question.
+
 ## Safe practice workflow
 
 1. Define the target and confirm it is allowed.
