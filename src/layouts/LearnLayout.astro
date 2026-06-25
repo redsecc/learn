@@ -18,45 +18,68 @@ const hasToc = Astro.slots.has('toc');
     <aside class="learn-aside">
       <LearningSidebar current={current} currentSection={currentSection} />
     </aside>
-    <article class="learn-main">
-      <slot />
-    </article>
     {hasToc && (
       <aside class="learn-toccol">
         <slot name="toc" />
       </aside>
     )}
+    <article class="learn-main">
+      <slot />
+    </article>
   </div>
 </BaseLayout>
 
 <style>
   .learn-layout {
     display: grid;
+    grid-template-areas:
+      "side"
+      "toc"
+      "main";
     gap: var(--space-8);
     padding-block: var(--space-8) var(--space-16);
   }
+  .learn-layout:not(.has-toc) {
+    grid-template-areas:
+      "side"
+      "main";
+  }
+  .learn-aside {
+    grid-area: side;
+    min-width: 0;
+  }
   .learn-main {
+    grid-area: main;
     min-width: 0;
     max-width: var(--maxw-prose);
+  }
+  .learn-toccol {
+    grid-area: toc;
+    min-width: 0;
   }
   @media (min-width: 900px) {
     .learn-layout {
       grid-template-columns: 17rem minmax(0, 1fr);
+      grid-template-areas: "side main";
       gap: var(--space-12);
+    }
+    .learn-layout.has-toc {
+      grid-template-areas:
+        "side toc"
+        "side main";
     }
   }
   @media (min-width: 1200px) {
     .learn-layout.has-toc {
       grid-template-columns: 17rem minmax(0, 1fr) 13rem;
+      grid-template-areas: "side main toc";
     }
   }
-  /* TOC column only on wide screens; sidebar is the primary nav otherwise. */
-  .learn-toccol {
-    display: none;
-  }
-  @media (min-width: 1200px) {
-    .learn-layout.has-toc .learn-toccol {
-      display: block;
+
+  @media (max-width: 899px) {
+    .learn-layout {
+      padding-block: var(--space-6) var(--space-12);
+      gap: var(--space-6);
     }
   }
 </style>

@@ -380,6 +380,10 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
       background: var(--surface);
       border-bottom: var(--line);
       display: none;
+      max-height: calc(100dvh - 4rem);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
     }
     mobile-nav.open .primary-nav {
       display: block;
@@ -410,7 +414,7 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
     .nav-menu-panel {
       position: static;
       width: 100%;
-      max-height: 16rem;
+      max-height: min(14rem, 45dvh);
       margin: 0 0 var(--space-3);
       border: var(--hairline);
       background: var(--bg);
@@ -433,6 +437,21 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
       border-left: none;
       gap: var(--space-2);
     }
+
+    .social-link {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+
+    @supports not (height: 100dvh) {
+      .primary-nav {
+        max-height: calc(100vh - 4rem);
+      }
+      .nav-menu-panel {
+        max-height: min(14rem, 45vh);
+      }
+    }
+
     /* animate the toggle into an X when open */
     mobile-nav.open .nav-toggle-bars {
       background: transparent;

@@ -149,4 +149,22 @@ const jsonLd = [
   .page-row:hover .page-go {
     color: var(--red-hover);
   }
+
+  @media (max-width: 560px) {
+    .page-row {
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4);
+    }
+    .page-num {
+      min-width: 2.4rem;
+      padding-top: 0.1rem;
+    }
+    .page-go {
+      display: none;
+    }
+    .page-meta {
+      gap: var(--space-1) var(--space-2);
+    }
+  }
 </style>

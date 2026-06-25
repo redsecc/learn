@@ -63,6 +63,20 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     );
     headings.forEach((h) => observer.observe(h));
   }
+
+  const tocDetails = document.querySelector<HTMLDetailsElement>('.toc-details');
+  if (tocDetails) {
+    const phone = window.matchMedia('(max-width: 720px)');
+    const syncToc = () => {
+      if (phone.matches) {
+        tocDetails.removeAttribute('open');
+      } else {
+        tocDetails.setAttribute('open', '');
+      }
+    };
+    syncToc();
+    phone.addEventListener('change', syncToc);
+  }
 </script>
 
 <style>
@@ -111,8 +125,8 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     border-left-color: var(--red);
   }
 
-  /* On mobile the TOC becomes a real collapsible disclosure. */
-  @media (max-width: 900px) {
+  /* Below wide desktop the TOC becomes a compact disclosure. */
+  @media (max-width: 1199px) {
     .toc {
       position: static;
       border: var(--hairline);

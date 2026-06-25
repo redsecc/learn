@@ -88,6 +88,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* ---- Typography -------------------------------------------------------- */
@@ -104,10 +106,10 @@ h4 {
 }
 
 h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: 3rem;
 }
 h2 {
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: 2rem;
   margin-top: var(--space-12);
 }
 h3 {
@@ -183,6 +185,11 @@ blockquote {
   border-left: 2px solid var(--border);
   border-radius: 0; /* single-sided accent → no radius */
   color: var(--text-secondary);
+}
+
+pre {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 table {
@@ -359,12 +366,72 @@ main {
 /* ---- Expressive Code tuning ------------------------------------------- */
 .expressive-code {
   margin: var(--space-6) 0;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* Prose container for MDX content */
+.prose {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
 .prose :is(h2, h3) {
   scroll-margin-top: 6rem;
 }
 .prose > :first-child {
   margin-top: 0;
+}
+.prose :is(pre, table, .expressive-code) {
+  max-width: 100%;
+}
+.prose table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --space-12: 2.25rem;
+    --space-16: 3rem;
+    --space-24: 4rem;
+  }
+
+  body {
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+
+  h1 {
+    font-size: 2.15rem;
+  }
+  h2 {
+    font-size: 1.55rem;
+  }
+  h3 {
+    font-size: 1.12rem;
+  }
+
+  .container {
+    padding-inline: var(--space-4);
+  }
+
+  .section {
+    padding-block: var(--space-12);
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  blockquote {
+    padding-inline: var(--space-4);
+  }
 }

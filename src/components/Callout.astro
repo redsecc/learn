@@ -62,4 +62,10 @@ const label = title ?? defaults[type];
   .callout-warning .callout-label {
     color: var(--red-hover);
   }
+
+  @media (max-width: 480px) {
+    .callout {
+      padding: var(--space-3) var(--space-4);
+    }
+  }
 </style>

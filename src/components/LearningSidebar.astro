@@ -55,6 +55,22 @@ const groups = await getLessonsBySection();
   </details>
 </nav>
 
+<script>
+  const libraryDetails = document.querySelector<HTMLDetailsElement>('.learn-sidebar .ds-details');
+  if (libraryDetails) {
+    const phone = window.matchMedia('(max-width: 720px)');
+    const syncLibrary = () => {
+      if (phone.matches) {
+        libraryDetails.removeAttribute('open');
+      } else {
+        libraryDetails.setAttribute('open', '');
+      }
+    };
+    syncLibrary();
+    phone.addEventListener('change', syncLibrary);
+  }
+</script>
+
 <style>
   .learn-sidebar {
     position: sticky;
@@ -174,6 +190,13 @@ const groups = await getLessonsBySection();
       max-height: none;
       overflow: visible;
     }
+    .ds-body {
+      max-height: 62dvh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding-right: var(--space-2);
+      scrollbar-width: thin;
+    }
     .ds-summary {
       cursor: pointer;
       pointer-events: auto;
@@ -184,6 +207,12 @@ const groups = await getLessonsBySection();
     }
     .ds-details[open] .ds-summary {
       margin-bottom: var(--space-4);
+    }
+
+    @supports not (height: 100dvh) {
+      .ds-body {
+        max-height: 62vh;
+      }
     }
   }
 </style>

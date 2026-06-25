@@ -78,7 +78,7 @@ const start = firstPageHref('getting-started');
     border-bottom: var(--hairline);
   }
   .lander-title {
-    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    font-size: 3.5rem;
     margin-bottom: var(--space-6);
   }
   .lander .lead {
@@ -168,6 +168,15 @@ const start = firstPageHref('getting-started');
   @media (max-width: 520px) {
     .stats {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .lander-title {
+      font-size: 2.35rem;
+    }
+    .sec-card {
+      padding: var(--space-4);
     }
   }
 </style>
