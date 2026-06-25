@@ -1,4 +1,5 @@
 ---
+import RoadmapThumb from '../components/RoadmapThumb.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { withBase } from '../lib/base';
 import {
@@ -12,52 +13,89 @@ import {
   sectionHref,
 } from '../lib/paths';
 
+const sectionVariants: Record<string, string> = {
+  [START_SECTION]: 'start',
+  foundations: 'defense',
+  'tooling-workflows': 'terminal',
+  linux: 'terminal',
+  networking: 'network',
+};
+
+const domainVariants: Record<string, string> = {
+  'web-applications': 'web',
+  'cloud-compute': 'cloud',
+  'enterprise-identity': 'identity',
+  'detection-response': 'detect',
+  'low-level-systems': 'systems',
+  'research-reporting': 'research',
+};
+
+const pathVariants: Record<string, string> = {
+  'red-teamer': 'offense',
+  pentester: 'web',
+  'blue-teamer': 'detect',
+  'defensive-engineer': 'defense',
+  'bug-bounty-hunter': 'research',
+  'appsec-specialist': 'app',
+  'ctf-player': 'ctf',
+  'binary-reverser': 'systems',
+  'cloud-container-security': 'cloud',
+  'forensics-incident-response': 'detect',
+};
+
 const start = getSections([START_SECTION])[0];
 const core = getSections(CORE_SECTIONS);
 const finish = getSections([FINISH_SECTION])[0];
 
 const domains = REAL_WORLD_DOMAINS.map((domain) => ({
   ...domain,
+  variant: domainVariants[domain.id] ?? 'default',
   paths: PATHS.filter((path) => path.domainIds.includes(domain.id)),
 }));
 
+const roleCards = PATHS.map((path) => ({
+  ...path,
+  domains: getDomains(path.domainIds),
+  milestoneLabels: path.milestones.map((milestone) => milestone.label),
+  variant: pathVariants[path.id] ?? 'default',
+}));
+
 const description =
-  'Detailed RedSec learning path flow chart across web security, cloud compute, enterprise identity, blue team, red team, CTF, binary exploitation, forensics, and reporting.';
+  'Compact RedSec learning path roadmap across web security, cloud compute, identity, blue team, red team, CTF, binary exploitation, forensics, and reporting.';
 ---
 
 <BaseLayout title="Learning Paths" description={description}>
   <section class="paths-hero">
     <div class="container">
       <span class="eyebrow">Learning paths</span>
-      <h1>Start at the top, then move down into real-world security work.</h1>
+      <h1>Pick a path without scrolling through a giant chart.</h1>
       <p class="lead">
-        The roadmap uses a top-to-bottom flow: foundation first, shared core
-        next, then real-world domains and role-specific milestones.
+        Start with the shared base, choose the real-world systems you care
+        about, then follow the compact role path that matches your goal.
       </p>
       <div class="path-actions">
-        <a class="btn btn-primary" href="#flow">View roadmap</a>
-        <a class="btn" href="#role-flows">View role paths</a>
-        <a class="btn" href={withBase('/path-guide')}>What the paths mean</a>
+        <a class="btn btn-primary" href="#overview">View overview</a>
+        <a class="btn" href="#roles">Choose a role</a>
+        <a class="btn" href={withBase('/path-guide')}>Path details</a>
       </div>
     </div>
   </section>
 
-  <section id="flow" class="section">
+  <section id="overview" class="section">
     <div class="container">
       <div class="section-heading">
-        <span class="eyebrow">Top-down roadmap</span>
-        <h2>Shared starting flow</h2>
+        <span class="eyebrow">Short roadmap</span>
+        <h2>One top-to-bottom overview.</h2>
         <p>
-          Everyone starts with the same base. From there, the roadmap branches
-          into domains like web, cloud compute, identity, detection, low-level
-          systems, and research workflow.
+          The full details live in the path guide. This page keeps the roadmap
+          short: foundation, core skills, domains, then a role.
         </p>
       </div>
 
-      <div class="roadmap-frame shared-roadmap" aria-label="Shared top-to-bottom learning roadmap">
-        <a class="roadmap-node roadmap-node-wide roadmap-node-start" href={withBase(sectionHref(start.slug))}>
-          <span class="node-art mono">{start.icon}</span>
-          <span class="node-body">
+      <div class="overview-roadmap" aria-label="Compact top-to-bottom learning roadmap">
+        <a class="roadmap-node start-node" href={withBase(sectionHref(start.slug))}>
+          <RoadmapThumb label={start.title} variant={sectionVariants[start.slug]} />
+          <span class="node-copy">
             <span class="node-kicker mono">start</span>
             <strong>{start.title}</strong>
             <small>{start.summary}</small>
@@ -67,13 +105,13 @@ const description =
         <span class="roadmap-spine" aria-hidden="true"></span>
 
         <div class="roadmap-group">
-          <span class="group-label mono">shared core</span>
-          <div class="node-grid">
+          <span class="group-label mono">core</span>
+          <div class="core-grid">
             {
               core.map((section) => (
-                <a class="roadmap-node roadmap-node-small" href={withBase(sectionHref(section.slug))}>
-                  <span class="node-art mono">{section.icon}</span>
-                  <span class="node-body">
+                <a class="mini-node" href={withBase(sectionHref(section.slug))}>
+                  <RoadmapThumb label={section.title} variant={sectionVariants[section.slug] ?? 'default'} />
+                  <span>
                     <strong>{section.title}</strong>
                     <small>{section.summary}</small>
                   </span>
@@ -85,184 +123,83 @@ const description =
 
         <span class="roadmap-spine" aria-hidden="true"></span>
 
-        <div class="roadmap-node roadmap-node-wide roadmap-node-branch">
-          <span class="node-art mono">map</span>
-          <span class="node-body">
-            <span class="node-kicker mono">branch</span>
-            <strong>Pick a real-world surface</strong>
-            <small>Choose the work you want to practice before picking a role path.</small>
-          </span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="domains" class="section domain-section">
-    <div class="container">
-      <div class="section-heading">
-        <span class="eyebrow">Real-world domains</span>
-        <h2>Branch by the kind of system you want to work on.</h2>
-        <p>
-          These domain nodes separate the library into practical environments:
-          applications, cloud compute, identity, detection, low-level systems,
-          and reporting-driven research.
-        </p>
-      </div>
-
-      <div class="roadmap-frame domain-roadmap" aria-label="Real-world domain branches">
-        <div class="roadmap-node roadmap-node-wide">
-          <span class="node-art mono">root</span>
-          <span class="node-body">
-            <span class="node-kicker mono">domain split</span>
-            <strong>Choose one or more domains</strong>
-            <small>Roles overlap, so domain cards show which paths use them.</small>
-          </span>
+        <div class="roadmap-group domain-group">
+          <span class="group-label mono">domains</span>
+          <div class="domain-grid">
+            {
+              domains.map((domain) => (
+                <article class="domain-node" id={`domain-${domain.id}`}>
+                  <RoadmapThumb label={domain.title} variant={domain.variant} />
+                  <div>
+                    <h3>{domain.title}</h3>
+                    <p>{domain.summary}</p>
+                    <div class="section-pills">
+                      {getSections(domain.sections).slice(0, 4).map((section) => (
+                        <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                      ))}
+                    </div>
+                  </div>
+                </article>
+              ))
+            }
+          </div>
         </div>
 
         <span class="roadmap-spine" aria-hidden="true"></span>
 
-        <div class="branch-grid">
-          {
-            domains.map((domain) => (
-              <article class="roadmap-node domain-card" id={`domain-${domain.id}`}>
-                <span class="node-art mono">{domain.shortTitle}</span>
-                <div class="node-body">
-                  <span class="node-kicker mono">domain</span>
-                  <h3>{domain.title}</h3>
-                  <p>{domain.summary}</p>
-                  <div class="example-pills">
-                    {domain.examples.map((example) => (
-                      <span>{example}</span>
-                    ))}
-                  </div>
-                  <div class="section-pills">
-                    {getSections(domain.sections).map((section) => (
-                      <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
-                    ))}
-                  </div>
-                  <div class="used-by">
-                    <span class="mini-label mono">used by</span>
-                    <div>
-                      {domain.paths.map((path) => (
-                        <a href={`#${path.id}`}>{path.shortTitle}</a>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))
-          }
+        <div class="roadmap-node finish-node">
+          <RoadmapThumb label={finish.title} variant="research" />
+          <span class="node-copy">
+            <span class="node-kicker mono">finish</span>
+            <strong>Choose a role path</strong>
+            <small>Use the compact cards below, then open the guide for deeper detail.</small>
+          </span>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="role-flows" class="section">
+  <section id="roles" class="section role-section">
     <div class="container">
       <div class="section-heading">
         <span class="eyebrow">Role paths</span>
-        <h2>Follow each path from top to bottom.</h2>
+        <h2>Compact paths you can scan quickly.</h2>
         <p>
-          Every role starts with the same base, drops into relevant domains,
-          moves through ordered milestones, and finishes with reporting and
-          career-ready output.
+          Each card shows the role, the real-world domains it uses, and the
+          ordered milestone names without repeating the full foundation chart.
         </p>
       </div>
 
-      <div class="role-flows">
+      <div class="role-grid">
         {
-          PATHS.map((path) => (
-            <article class="role-roadmap" id={path.id}>
-              <header class="role-head">
+          roleCards.map((path) => (
+            <article class="role-card" id={path.id}>
+              <header class="role-card-head">
+                <RoadmapThumb label={path.shortTitle} variant={path.variant} />
                 <div>
                   <span class="path-id mono">{path.shortTitle}</span>
                   <h3>{path.title}</h3>
+                  <p>{path.summary}</p>
                 </div>
-                <a class="path-guide-link mono" href={withBase(`/path-guide#${path.id}`)}>
-                  guide
-                </a>
               </header>
-              <p class="role-summary">{path.summary}</p>
 
-              <div class="roadmap-frame role-frame" aria-label={`${path.title} top-to-bottom roadmap`}>
-                <a class="roadmap-node roadmap-node-wide roadmap-node-start" href={withBase(sectionHref(start.slug))}>
-                  <span class="node-art mono">{start.icon}</span>
-                  <span class="node-body">
-                    <span class="node-kicker mono">01 start</span>
-                    <strong>{start.title}</strong>
-                    <small>{start.summary}</small>
-                  </span>
-                </a>
-
-                <span class="roadmap-spine" aria-hidden="true"></span>
-
-                <div class="roadmap-group">
-                  <span class="group-label mono">02 core</span>
-                  <div class="node-grid compact-grid">
-                    {core.map((section) => (
-                      <a class="roadmap-node roadmap-node-small" href={withBase(sectionHref(section.slug))}>
-                        <span class="node-art mono">{section.icon}</span>
-                        <span class="node-body">
-                          <strong>{section.title}</strong>
-                          <small>{section.summary}</small>
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-
-                <span class="roadmap-spine" aria-hidden="true"></span>
-
-                <div class="roadmap-group domain-group">
-                  <span class="group-label mono">03 domains</span>
-                  <div class="branch-grid compact-branches">
-                    {getDomains(path.domainIds).map((domain) => (
-                      <a class="roadmap-node branch-node" href={`#domain-${domain.id}`}>
-                        <span class="node-art mono">{domain.shortTitle}</span>
-                        <span class="node-body">
-                          <strong>{domain.title}</strong>
-                          <small>{domain.summary}</small>
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-
-                <span class="roadmap-spine" aria-hidden="true"></span>
-
-                <ol class="milestone-roadmap" aria-label={`${path.title} milestone sequence`}>
-                  {path.milestones.map((milestone, index) => (
-                    <li>
-                      <div class="roadmap-node milestone-node">
-                        <span class="node-art mono">
-                          {String(index + 1).padStart(2, '0')}
-                        </span>
-                        <div class="node-body">
-                          <span class="node-kicker mono">milestone</span>
-                          <strong>{milestone.label}</strong>
-                          <p>{milestone.note}</p>
-                          <div class="section-pills">
-                            {getSections(milestone.sections).map((section) => (
-                              <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-
-                <span class="roadmap-spine" aria-hidden="true"></span>
-
-                <a class="roadmap-node roadmap-node-wide roadmap-node-finish" href={withBase(sectionHref(finish.slug))}>
-                  <span class="node-art mono">end</span>
-                  <span class="node-body">
-                    <span class="node-kicker mono">finish</span>
-                    <strong>{finish.title}</strong>
-                    <small>Turn practice into notes, writeups, reports, interviews, and next steps.</small>
-                  </span>
-                </a>
+              <div class="role-domain-row">
+                {path.domains.slice(0, 4).map((domain) => (
+                  <a href={`#domain-${domain.id}`}>{domain.shortTitle}</a>
+                ))}
               </div>
+
+              <ol class="compact-steps">
+                <li>Start with foundation and core skills</li>
+                {path.milestoneLabels.slice(0, 3).map((label) => (
+                  <li>{label}</li>
+                ))}
+                <li>{finish.title}</li>
+              </ol>
+
+              <a class="guide-link mono" href={withBase(`/path-guide#${path.id}`)}>
+                open detailed guide
+              </a>
             </article>
           ))
         }
@@ -292,59 +229,46 @@ const description =
   .section-heading h2 {
     margin-top: var(--space-2);
   }
-  .domain-section {
-    border-block: var(--hairline);
+  .role-section {
+    border-top: var(--hairline);
   }
 
-  .roadmap-frame {
+  .overview-roadmap {
     --connector: color-mix(in srgb, var(--red-hover) 62%, var(--border));
     display: grid;
     justify-items: center;
-    width: 100%;
   }
-  .roadmap-node {
-    display: grid;
-    grid-template-columns: 5rem minmax(0, 1fr);
-    width: min(100%, 42rem);
-    min-height: 4.75rem;
-    overflow: hidden;
+  .roadmap-node,
+  .mini-node,
+  .domain-node,
+  .role-card {
     border: var(--line);
     border-radius: var(--radius);
-    background: color-mix(in srgb, var(--surface) 88%, var(--bg));
+    background: color-mix(in srgb, var(--surface) 90%, var(--bg));
+  }
+  .roadmap-node,
+  .mini-node,
+  .domain-node {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    overflow: hidden;
     color: var(--text);
   }
-  .roadmap-node:hover {
+  .roadmap-node {
+    width: min(100%, 42rem);
+  }
+  .mini-node,
+  .domain-node {
+    min-width: 0;
+  }
+  .roadmap-node:hover,
+  .mini-node:hover {
     border-color: color-mix(in srgb, var(--red-hover) 45%, var(--border));
     text-decoration: none;
   }
-  .roadmap-node-wide {
-    width: min(100%, 44rem);
-  }
-  .roadmap-node-small,
-  .branch-node {
-    width: 100%;
-    min-height: 4.25rem;
-  }
-  .roadmap-node-start,
-  .roadmap-node-finish {
-    border-color: color-mix(in srgb, var(--red) 55%, var(--border));
-  }
-  .roadmap-node-branch {
-    background: var(--surface);
-  }
-  .node-art {
-    display: grid;
-    place-items: center;
-    min-height: 100%;
-    padding: var(--space-3);
-    border-right: var(--hairline);
-    background: color-mix(in srgb, var(--red-deep) 72%, var(--elevated));
-    color: var(--text);
-    font-size: 0.72rem;
-    line-height: 1.1;
-    text-align: center;
-  }
-  .node-body {
+  .node-copy,
+  .mini-node > span,
+  .domain-node > div {
     display: grid;
     align-content: center;
     gap: 0.3rem;
@@ -354,35 +278,39 @@ const description =
   .node-kicker,
   .group-label,
   .path-id,
-  .path-guide-link,
-  .mini-label {
+  .guide-link {
     color: var(--text-muted);
     font-size: 0.74rem;
   }
-  .node-body strong,
-  .node-body h3 {
+  .node-copy strong,
+  .mini-node strong,
+  .domain-node h3,
+  .role-card h3 {
     color: var(--text);
     font-size: 1rem;
     line-height: 1.3;
     margin: 0;
   }
-  .node-body small,
-  .node-body p,
-  .role-summary {
+  .node-copy small,
+  .mini-node small,
+  .domain-node p,
+  .role-card p {
     color: var(--text-secondary);
   }
-  .node-body small {
+  .node-copy small,
+  .mini-node small {
     font-size: 0.82rem;
     line-height: 1.45;
   }
-  .node-body p {
+  .domain-node p,
+  .role-card p {
     margin: 0;
     font-size: 0.9rem;
   }
   .roadmap-spine {
     display: block;
     width: 1px;
-    height: 2.25rem;
+    height: 2rem;
     background: var(--connector);
     position: relative;
   }
@@ -399,43 +327,35 @@ const description =
     background: var(--bg);
   }
   .roadmap-group {
-    width: min(100%, 54rem);
+    width: min(100%, 58rem);
     border: 1px dashed color-mix(in srgb, var(--red-hover) 52%, var(--border));
     border-radius: var(--radius);
     padding: var(--space-8) var(--space-4) var(--space-4);
     position: relative;
-    background: color-mix(in srgb, var(--surface) 50%, transparent);
+    background: color-mix(in srgb, var(--surface) 44%, transparent);
   }
   .group-label {
     position: absolute;
     top: var(--space-3);
     left: var(--space-4);
   }
-  .node-grid,
-  .branch-grid {
+  .core-grid,
+  .domain-grid,
+  .role-grid {
     display: grid;
-    gap: var(--space-3);
-    width: 100%;
+    gap: var(--space-4);
   }
-  .domain-roadmap .branch-grid {
-    width: min(100%, 62rem);
+  .domain-grid {
+    align-items: stretch;
   }
-  .domain-card {
-    width: 100%;
-  }
-  .domain-card .node-body {
-    align-content: start;
-  }
-  .example-pills,
   .section-pills,
-  .used-by div {
+  .role-domain-row {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
   }
-  .example-pills span,
   .section-pills a,
-  .used-by a {
+  .role-domain-row a {
     border: var(--hairline);
     border-radius: var(--radius);
     color: var(--text-secondary);
@@ -445,109 +365,86 @@ const description =
     padding: 0.24rem 0.5rem;
   }
   .section-pills a:hover,
-  .used-by a:hover {
+  .role-domain-row a:hover {
     color: var(--text);
     background: var(--elevated);
     text-decoration: none;
   }
-  .used-by {
+
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+  .role-card {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+  .role-card-head {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: stretch;
+  }
+  .role-card-head :global(.roadmap-thumb) {
+    border-radius: var(--radius);
+    min-height: 5rem;
+  }
+  .role-card h3 {
+    margin-top: var(--space-1);
+  }
+  .compact-steps {
     display: grid;
     gap: var(--space-2);
-    border-top: var(--hairline);
-    padding-top: var(--space-3);
-    margin-top: var(--space-2);
-  }
-  .role-flows {
-    display: grid;
-    gap: var(--space-12);
-  }
-  .role-roadmap {
-    border-top: var(--line);
-    padding-top: var(--space-8);
-  }
-  .role-head {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-4);
-    margin-bottom: var(--space-3);
-  }
-  .role-head h3 {
-    margin: var(--space-1) 0 0;
-    font-size: 1.35rem;
-  }
-  .path-guide-link {
-    align-self: start;
-    color: var(--red-hover);
-  }
-  .role-summary {
-    max-width: 54rem;
-    margin-bottom: var(--space-6);
-  }
-  .role-frame {
-    align-items: start;
-  }
-  .domain-group {
-    width: min(100%, 58rem);
-  }
-  .milestone-roadmap {
-    display: grid;
-    justify-items: center;
-    width: min(100%, 48rem);
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: var(--space-4) 0 0;
+    border-top: var(--hairline);
+    color: var(--text-secondary);
+    font-size: 0.88rem;
   }
-  .milestone-roadmap li {
-    display: grid;
-    justify-items: center;
-    width: 100%;
+  .compact-steps li {
     margin: 0;
+    display: grid;
+    grid-template-columns: 0.7rem minmax(0, 1fr);
+    gap: var(--space-2);
   }
-  .milestone-roadmap li + li::before {
+  .compact-steps li::before {
     content: '';
-    width: 1px;
-    height: 1.5rem;
-    background: var(--connector);
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-top: 0.62rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--red-hover) 70%, var(--border));
   }
-  .milestone-node {
-    width: 100%;
-  }
-
-  @media (min-width: 720px) {
-    .node-grid,
-    .branch-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .compact-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .compact-branches {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  .guide-link {
+    color: var(--red-hover);
+    justify-self: start;
   }
 
-  @media (min-width: 1100px) {
-    .domain-roadmap .branch-grid {
+  @media (min-width: 760px) {
+    .core-grid,
+    .domain-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .role-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (max-width: 620px) {
-    .roadmap-node {
+    .roadmap-node,
+    .mini-node,
+    .domain-node,
+    .role-card-head {
       grid-template-columns: 4rem minmax(0, 1fr);
     }
-    .node-art {
-      padding: var(--space-2);
-      font-size: 0.66rem;
-    }
-    .node-body {
+    .node-copy,
+    .mini-node > span,
+    .domain-node > div {
       padding: var(--space-3);
     }
     .roadmap-group {
       padding-inline: var(--space-3);
-    }
-    .role-head {
-      display: grid;
     }
   }
 </style>

@@ -1,0 +1,285 @@
+---
+interface Props {
+  label: string;
+  variant?: string;
+}
+
+const { label, variant = 'default' } = Astro.props;
+const allowed = new Set([
+  'app',
+  'cloud',
+  'ctf',
+  'default',
+  'defense',
+  'detect',
+  'identity',
+  'network',
+  'offense',
+  'research',
+  'start',
+  'systems',
+  'terminal',
+  'web',
+]);
+const safeVariant = allowed.has(variant) ? variant : 'default';
+const initials = label
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((part) => part[0])
+  .join('')
+  .toUpperCase();
+---
+
+<span class:list={['roadmap-thumb', `thumb-${safeVariant}`]} aria-hidden="true">
+  <svg viewBox="0 0 80 64" focusable="false">
+    <rect class="thumb-bg" x="0" y="0" width="80" height="64" rx="6"></rect>
+    {
+      safeVariant === 'web' && (
+        <g>
+          <rect class="thumb-panel" x="14" y="14" width="52" height="34" rx="3"></rect>
+          <path class="thumb-line" d="M20 23h24M20 31h36M20 39h18"></path>
+          <path class="thumb-accent" d="M48 21l8 8-8 8"></path>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'cloud' && (
+        <g>
+          <path class="thumb-panel" d="M22 43h36a10 10 0 0 0 1-20 14 14 0 0 0-26-5 11 11 0 0 0-11 25z"></path>
+          <rect class="thumb-accent" x="28" y="42" width="24" height="9" rx="2"></rect>
+          <path class="thumb-line" d="M33 47h14"></path>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'identity' && (
+        <g>
+          <circle class="thumb-panel" cx="34" cy="25" r="9"></circle>
+          <path class="thumb-line" d="M43 32l14 14M52 41l5-5M56 45l5-5"></path>
+          <rect class="thumb-accent" x="18" y="42" width="20" height="8" rx="2"></rect>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'detect' && (
+        <g>
+          <circle class="thumb-panel" cx="40" cy="32" r="20"></circle>
+          <circle class="thumb-line" cx="40" cy="32" r="11"></circle>
+          <path class="thumb-accent" d="M40 32l17-8"></path>
+          <circle class="thumb-accent-fill" cx="40" cy="32" r="3"></circle>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'systems' && (
+        <g>
+          <rect class="thumb-panel" x="23" y="17" width="34" height="30" rx="4"></rect>
+          <path class="thumb-line" d="M29 24h22M29 32h14M29 40h19"></path>
+          <path class="thumb-accent" d="M17 24h6M17 32h6M17 40h6M57 24h6M57 32h6M57 40h6"></path>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'research' && (
+        <g>
+          <rect class="thumb-panel" x="19" y="14" width="30" height="38" rx="3"></rect>
+          <path class="thumb-line" d="M25 24h18M25 32h18M25 40h12"></path>
+          <circle class="thumb-accent" cx="52" cy="41" r="8"></circle>
+          <path class="thumb-accent" d="M58 47l8 8"></path>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'terminal' && (
+        <g>
+          <rect class="thumb-panel" x="14" y="16" width="52" height="34" rx="3"></rect>
+          <path class="thumb-accent" d="M23 27l8 5-8 5"></path>
+          <path class="thumb-line" d="M36 37h18"></path>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'network' && (
+        <g>
+          <path class="thumb-line" d="M24 23l16 10 16-10M24 41l16-8 16 8"></path>
+          <circle class="thumb-panel" cx="24" cy="23" r="7"></circle>
+          <circle class="thumb-panel" cx="56" cy="23" r="7"></circle>
+          <circle class="thumb-panel" cx="40" cy="33" r="7"></circle>
+          <circle class="thumb-accent-fill" cx="24" cy="41" r="6"></circle>
+          <circle class="thumb-accent-fill" cx="56" cy="41" r="6"></circle>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'offense' && (
+        <g>
+          <circle class="thumb-panel" cx="40" cy="32" r="20"></circle>
+          <circle class="thumb-line" cx="40" cy="32" r="11"></circle>
+          <path class="thumb-line" d="M40 12v12M40 40v12M20 32h12M48 32h12"></path>
+          <circle class="thumb-accent-fill" cx="40" cy="32" r="4"></circle>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'defense' && (
+        <g>
+          <path class="thumb-panel" d="M40 13l22 8v13c0 14-10 22-22 26-12-4-22-12-22-26V21z"></path>
+          <path class="thumb-accent" d="M29 33l8 8 15-18"></path>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'ctf' && (
+        <g>
+          <path class="thumb-line" d="M25 52V14"></path>
+          <path class="thumb-panel" d="M27 15h31l-6 10 6 10H27z"></path>
+          <path class="thumb-accent" d="M32 25h14"></path>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'app' && (
+        <g>
+          <rect class="thumb-panel" x="15" y="15" width="50" height="36" rx="4"></rect>
+          <path class="thumb-line" d="M15 25h50M25 35h12M43 35h12M25 43h30"></path>
+          <circle class="thumb-accent-fill" cx="23" cy="20" r="2"></circle>
+          <circle class="thumb-accent-fill" cx="30" cy="20" r="2"></circle>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'start' && (
+        <g>
+          <path class="thumb-panel" d="M26 50V15"></path>
+          <path class="thumb-accent-fill" d="M28 16h29l-7 10 7 10H28z"></path>
+          <path class="thumb-line" d="M24 50h26"></path>
+        </g>
+      )
+    }
+    {
+      safeVariant === 'default' && (
+        <g>
+          <rect class="thumb-panel" x="18" y="18" width="44" height="28" rx="4"></rect>
+          <path class="thumb-line" d="M25 27h30M25 36h19"></path>
+          <circle class="thumb-accent-fill" cx="58" cy="18" r="6"></circle>
+        </g>
+      )
+    }
+  </svg>
+  <span class="thumb-code mono">{initials}</span>
+</span>
+
+<style>
+  .roadmap-thumb {
+    --thumb-bg: #182036;
+    --thumb-fg: #dfe7ff;
+    --thumb-muted: #7d8fb6;
+    --thumb-accent: #d81f31;
+    display: block;
+    position: relative;
+    width: 5rem;
+    min-height: 100%;
+    overflow: hidden;
+    background: var(--thumb-bg);
+  }
+  .roadmap-thumb svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 4.75rem;
+  }
+  .thumb-bg {
+    fill: var(--thumb-bg);
+  }
+  .thumb-panel {
+    fill: color-mix(in srgb, var(--thumb-fg) 16%, transparent);
+    stroke: var(--thumb-fg);
+    stroke-width: 2;
+  }
+  .thumb-line,
+  .thumb-accent {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2.5;
+  }
+  .thumb-line {
+    stroke: var(--thumb-muted);
+  }
+  .thumb-accent {
+    stroke: var(--thumb-accent);
+  }
+  .thumb-accent-fill {
+    fill: var(--thumb-accent);
+  }
+  .thumb-code {
+    position: absolute;
+    right: 0.3rem;
+    bottom: 0.25rem;
+    color: color-mix(in srgb, var(--thumb-fg) 74%, transparent);
+    font-size: 0.6rem;
+    line-height: 1;
+  }
+  .thumb-web,
+  .thumb-app {
+    --thumb-bg: #10233d;
+    --thumb-fg: #b9dcff;
+    --thumb-muted: #74a8dc;
+    --thumb-accent: #e4485a;
+  }
+  .thumb-cloud {
+    --thumb-bg: #102b2f;
+    --thumb-fg: #bff8ed;
+    --thumb-muted: #6cc6bd;
+    --thumb-accent: #e6d36c;
+  }
+  .thumb-identity {
+    --thumb-bg: #2a2137;
+    --thumb-fg: #e9d7ff;
+    --thumb-muted: #a889c7;
+    --thumb-accent: #e4485a;
+  }
+  .thumb-detect,
+  .thumb-defense {
+    --thumb-bg: #172916;
+    --thumb-fg: #c9f2c8;
+    --thumb-muted: #79b47b;
+    --thumb-accent: #e6d36c;
+  }
+  .thumb-systems,
+  .thumb-terminal {
+    --thumb-bg: #24262b;
+    --thumb-fg: #e5e7eb;
+    --thumb-muted: #9ca3af;
+    --thumb-accent: #e4485a;
+  }
+  .thumb-research,
+  .thumb-ctf {
+    --thumb-bg: #312312;
+    --thumb-fg: #ffe1b8;
+    --thumb-muted: #c9914f;
+    --thumb-accent: #e4485a;
+  }
+  .thumb-network {
+    --thumb-bg: #162438;
+    --thumb-fg: #c9deff;
+    --thumb-muted: #7f9bc4;
+    --thumb-accent: #7de0c3;
+  }
+  .thumb-offense,
+  .thumb-start {
+    --thumb-bg: #35131a;
+    --thumb-fg: #ffd5dc;
+    --thumb-muted: #c57986;
+    --thumb-accent: #f4f4f5;
+  }
+  @media (max-width: 620px) {
+    .roadmap-thumb {
+      width: 4rem;
+    }
+    .roadmap-thumb svg {
+      min-height: 4.25rem;
+    }
+  }
+</style>
