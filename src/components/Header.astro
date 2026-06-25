@@ -1,19 +1,24 @@
 ---
 import Logo from './Logo.astro';
 import { withBase } from '../lib/base';
+import { SECTIONS } from '../lib/learn';
 import { SITE } from '../lib/site';
 
 const nav = [
-  { label: 'Foundations', href: withBase('/foundations') },
-  { label: 'Web', href: withBase('/web-security') },
-  { label: 'CTFs', href: withBase('/ctfs') },
-  { label: 'Bug bounties', href: withBase('/bug-bounties') },
-  { label: 'redsec.cc', href: 'https://redsec.cc', external: true },
+  { label: 'Learning Paths', href: withBase('/learning-paths') },
+  { label: 'Path Guide', href: withBase('/path-guide') },
 ];
+
+const learnLinks = SECTIONS.map((section) => ({
+  label: section.title,
+  summary: section.summary,
+  href: withBase(`/${section.slug}`),
+}));
 
 const social = [
   { label: 'GitHub', href: SITE.social.github, icon: 'github' },
   { label: 'Discord', href: SITE.social.discord, icon: 'discord' },
+  { label: 'redsec.cc', href: SITE.social.website, icon: 'website' },
 ];
 
 // Mark the active section (first path segment after the base).
@@ -22,6 +27,7 @@ const isActive = (href: string) => {
   const seg = href.replace(/\/+$/, '');
   return path === seg || path.startsWith(seg + '/');
 };
+const learnActive = learnLinks.some((item) => isActive(item.href));
 ---
 
 <header class="site-header">
@@ -44,26 +50,43 @@ const isActive = (href: string) => {
 
       <nav id="primary-nav" class="primary-nav" aria-label="Primary">
         <ul>
+          <li class="nav-dropdown">
+            <details class="nav-menu">
+              <summary class:list={['nav-link', 'nav-summary', { active: learnActive }]}>
+                <span>Learn</span>
+                <span class="nav-caret" aria-hidden="true">v</span>
+              </summary>
+              <div class="nav-menu-panel">
+                <a class="nav-menu-item nav-menu-all" href={withBase('/')}>
+                  <span class="nav-menu-title">All learning</span>
+                  <span class="nav-menu-summary">Browse every category in the library.</span>
+                </a>
+                {
+                  learnLinks.map((item) => (
+                    <a
+                      class:list={['nav-menu-item', { active: isActive(item.href) }]}
+                      href={item.href}
+                    >
+                      <span class="nav-menu-title">{item.label}</span>
+                      <span class="nav-menu-summary">{item.summary}</span>
+                    </a>
+                  ))
+                }
+              </div>
+            </details>
+          </li>
           {
-            nav.map((item) =>
-              item.external ? (
-                <li>
-                  <a href={item.href} class="nav-link" target="_blank" rel="noopener noreferrer">
-                    {item.label} ↗
-                  </a>
-                </li>
-              ) : (
-                <li>
-                  <a
-                    href={item.href}
-                    class:list={['nav-link', { active: isActive(item.href) }]}
-                    aria-current={isActive(item.href) ? 'page' : undefined}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              )
-            )
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class:list={['nav-link', { active: isActive(item.href) }]}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
           }
           <li class="nav-social">
             {
@@ -76,6 +99,12 @@ const isActive = (href: string) => {
                   aria-label={s.label}
                   title={s.label}
                 >
+                  {s.icon === 'website' && (
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                      <path d="M3.5 12h17M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                    </svg>
+                  )}
                   {s.icon === 'github' && (
                     <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
                       <path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.04-3.34.72-4.04-1.6-4.04-1.6-.55-1.38-1.34-1.75-1.34-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.22 1.84 1.22 1.07 1.8 2.81 1.28 3.5.98.11-.77.42-1.28.76-1.58-2.67-.3-5.47-1.31-5.47-5.84 0-1.29.47-2.34 1.24-3.17-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.21.96-.26 1.98-.39 3-.4 1.02 0 2.04.14 3 .4 2.28-1.53 3.29-1.21 3.29-1.21.66 1.66.24 2.88.12 3.18.77.83 1.23 1.88 1.23 3.17 0 4.54-2.81 5.54-5.49 5.83.43.36.81 1.09.81 2.2 0 1.59-.01 2.87-.01 3.26 0 .32.21.7.82.58A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z" />
@@ -106,6 +135,9 @@ const isActive = (href: string) => {
 
       const close = () => {
         this.classList.remove('open');
+        this.querySelectorAll('details[open]').forEach((details) => {
+          details.removeAttribute('open');
+        });
         btn.setAttribute('aria-expanded', 'false');
         btn.setAttribute('aria-label', 'Open menu');
       };
@@ -175,6 +207,9 @@ const isActive = (href: string) => {
     margin: 0;
     padding: 0;
   }
+  .primary-nav li {
+    margin: 0;
+  }
   .nav-link {
     font-family: var(--font-mono);
     font-size: 0.85rem;
@@ -183,6 +218,73 @@ const isActive = (href: string) => {
     border-radius: var(--radius);
     border: 1px solid transparent;
     display: inline-block;
+  }
+  .nav-dropdown {
+    position: relative;
+  }
+  .nav-menu {
+    position: relative;
+  }
+  .nav-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    list-style: none;
+    cursor: pointer;
+  }
+  .nav-summary::-webkit-details-marker {
+    display: none;
+  }
+  .nav-caret {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    line-height: 1;
+  }
+  .nav-menu[open] .nav-caret {
+    transform: rotate(180deg);
+  }
+  .nav-menu-panel {
+    position: absolute;
+    top: calc(100% + 0.45rem);
+    left: 0;
+    width: min(22rem, calc(100vw - 2rem));
+    max-height: 18rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    background: var(--surface);
+    border: var(--line);
+    border-radius: var(--radius);
+    padding: var(--space-2);
+  }
+  .nav-menu-item {
+    display: grid;
+    gap: 0.15rem;
+    color: var(--text-secondary);
+    padding: 0.62rem 0.7rem;
+    border-radius: var(--radius);
+  }
+  .nav-menu-item:hover,
+  .nav-menu-item.active {
+    color: var(--text);
+    background: var(--elevated);
+    text-decoration: none;
+  }
+  .nav-menu-all {
+    border-bottom: var(--hairline);
+    border-radius: var(--radius) var(--radius) 0 0;
+    margin-bottom: var(--space-1);
+  }
+  .nav-menu-title {
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+  .nav-menu-summary {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    line-height: 1.35;
   }
   .nav-link:hover {
     color: var(--text);
@@ -273,11 +375,27 @@ const isActive = (href: string) => {
       gap: 0;
       padding: var(--space-2) var(--space-6) var(--space-4);
     }
+    .nav-dropdown {
+      border-bottom: var(--hairline);
+    }
     .nav-link {
       display: block;
       padding: 0.75rem 0;
       border-bottom: var(--hairline);
       border-radius: 0;
+    }
+    .nav-summary {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 0;
+    }
+    .nav-menu-panel {
+      position: static;
+      width: 100%;
+      max-height: 16rem;
+      margin: 0 0 var(--space-3);
+      border: var(--hairline);
+      background: var(--bg);
     }
     .nav-link.active {
       border-bottom: var(--hairline);

@@ -1,0 +1,245 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/base';
+import {
+  CORE_SECTIONS,
+  FINISH_SECTION,
+  PATHS,
+  START_SECTION,
+  getSections,
+  sectionHref,
+} from '../lib/paths';
+
+const start = getSections([START_SECTION])[0];
+const core = getSections(CORE_SECTIONS);
+const finish = getSections([FINISH_SECTION])[0];
+
+const description =
+  'Start-to-finish RedSec learning paths for red teaming, pentesting, blue teaming, defensive security, bug bounties, AppSec, CTFs, binary exploitation, cloud, and forensics.';
+---
+
+<BaseLayout title="Learning Paths" description={description}>
+  <section class="paths-hero">
+    <div class="container">
+      <span class="eyebrow">Learning paths</span>
+      <h1>Start with the basics, then branch into a role.</h1>
+      <p class="lead">
+        Every path starts with the same foundation, splits into role-focused
+        categories, and ends with clear notes, evidence, and next steps.
+      </p>
+      <div class="path-actions">
+        <a class="btn btn-primary" href="#flow">View flow chart</a>
+        <a class="btn" href={withBase('/path-guide')}>What the paths mean</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="flow" class="section">
+    <div class="container flow-wrap">
+      <div class="flow-node flow-start">
+        <span class="flow-kicker mono">start</span>
+        <h2>{start.title}</h2>
+        <p>{start.summary}</p>
+        <a class="node-link mono" href={withBase(sectionHref(start.slug))}>Open category</a>
+      </div>
+
+      <div class="flow-node flow-core">
+        <span class="flow-kicker mono">shared core</span>
+        <h2>Build the base every path needs</h2>
+        <div class="section-pills">
+          {
+            core.map((section) => (
+              <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="split-label mono" aria-hidden="true">choose a branch</div>
+
+      <div class="path-grid">
+        {
+          PATHS.map((path) => (
+            <article class="path-card" id={path.id}>
+              <div class="path-top">
+                <span class="path-id mono">{path.shortTitle}</span>
+                <a class="path-guide-link mono" href={withBase(`/path-guide#${path.id}`)}>
+                  guide
+                </a>
+              </div>
+              <h2>{path.title}</h2>
+              <p>{path.summary}</p>
+
+              <ol class="stage-list">
+                {
+                  path.stages.map((stage) => (
+                    <li>
+                      <span class="stage-label mono">{stage.label}</span>
+                      <span class="stage-note">{stage.note}</span>
+                      <span class="stage-sections">
+                        {getSections(stage.sections).map((section) => (
+                          <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                        ))}
+                      </span>
+                    </li>
+                  ))
+                }
+              </ol>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="flow-node flow-finish">
+        <span class="flow-kicker mono">finish</span>
+        <h2>{finish.title}</h2>
+        <p>
+          Convert what you learned into clean writeups, responsible reports,
+          portfolio notes, interview stories, or defensive action plans.
+        </p>
+        <a class="node-link mono" href={withBase(sectionHref(finish.slug))}>Open category</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .paths-hero {
+    padding-block: var(--space-24) var(--space-12);
+    border-bottom: var(--hairline);
+  }
+  .paths-hero h1 {
+    max-width: 52rem;
+  }
+  .path-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+  .flow-wrap {
+    display: grid;
+    gap: var(--space-8);
+  }
+  .flow-node {
+    border: var(--line);
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    position: relative;
+  }
+  .flow-node h2 {
+    margin-top: 0;
+    margin-bottom: var(--space-3);
+    font-size: 1.45rem;
+  }
+  .flow-kicker,
+  .path-id,
+  .stage-label,
+  .split-label,
+  .node-link,
+  .path-guide-link {
+    color: var(--text-muted);
+    font-size: 0.74rem;
+  }
+  .flow-start,
+  .flow-finish {
+    border-color: color-mix(in srgb, var(--red) 42%, var(--border));
+  }
+  .node-link,
+  .path-guide-link {
+    color: var(--red-hover);
+  }
+  .section-pills,
+  .stage-sections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .section-pills a,
+  .stage-sections a {
+    border: var(--hairline);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.22rem 0.5rem;
+  }
+  .section-pills a:hover,
+  .stage-sections a:hover {
+    color: var(--text);
+    background: var(--elevated);
+    text-decoration: none;
+  }
+  .split-label {
+    justify-self: center;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    padding: 0.25rem 0.7rem;
+    background: var(--bg);
+  }
+  .path-grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .path-card {
+    border: var(--hairline);
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: var(--space-5, 1.25rem);
+  }
+  .path-card h2 {
+    margin-top: 0;
+    font-size: 1.12rem;
+  }
+  .path-card p {
+    font-size: 0.92rem;
+  }
+  .path-top {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+  .stage-list {
+    list-style: none;
+    margin: var(--space-5, 1.25rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .stage-list li {
+    margin: 0;
+    display: grid;
+    gap: var(--space-2);
+    border-top: var(--hairline);
+    padding-top: var(--space-3);
+  }
+  .stage-note {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+  }
+  @media (min-width: 760px) {
+    .flow-wrap {
+      position: relative;
+    }
+    .flow-wrap::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: var(--border);
+      z-index: -1;
+    }
+    .path-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1080px) {
+    .path-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

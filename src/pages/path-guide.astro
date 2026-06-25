@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/base';
+import { PATHS, getSections, sectionHref } from '../lib/paths';
+
+const description =
+  'Plain-language explanations of each RedSec learning path: red teaming, pentesting, blue teaming, defensive security, bug bounties, AppSec, CTFs, binary exploitation, cloud, and forensics.';
+---
+
+<BaseLayout title="Path Guide" description={description}>
+  <section class="guide-hero">
+    <div class="container">
+      <span class="eyebrow">Path guide</span>
+      <h1>What each learning path is for.</h1>
+      <p class="lead">
+        Pick a path by the kind of work you want to practice. The categories
+        overlap on purpose because real security roles share fundamentals.
+      </p>
+      <div class="guide-actions">
+        <a class="btn btn-primary" href={withBase('/learning-paths')}>View flow chart</a>
+        <a class="btn" href={withBase('/')}>Browse all learning</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container guide-grid">
+      {
+        PATHS.map((path) => (
+          <article class="guide-card" id={path.id}>
+            <div class="guide-top">
+              <span class="path-code mono">{path.shortTitle}</span>
+              <a class="flow-link mono" href={withBase(`/learning-paths#${path.id}`)}>
+                flow
+              </a>
+            </div>
+            <h2>{path.title}</h2>
+            <p class="role">{path.role}</p>
+
+            <h3>What it means</h3>
+            <p>{path.definition}</p>
+
+            <h3>Good fit</h3>
+            <p>{path.bestFor}</p>
+
+            <h3>End state</h3>
+            <p>{path.outcome}</p>
+
+            <h3>Categories in this path</h3>
+            <div class="category-list">
+              {
+                getSections(
+                  path.stages.flatMap((stage) => stage.sections),
+                ).map((section) => (
+                  <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                ))
+              }
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .guide-hero {
+    padding-block: var(--space-24) var(--space-12);
+    border-bottom: var(--hairline);
+  }
+  .guide-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+  .guide-grid {
+    display: grid;
+    gap: var(--space-5, 1.25rem);
+  }
+  .guide-card {
+    border: var(--hairline);
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+  }
+  .guide-top {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+  .path-code,
+  .flow-link {
+    color: var(--text-muted);
+    font-size: 0.74rem;
+  }
+  .flow-link {
+    color: var(--red-hover);
+  }
+  .guide-card h2 {
+    margin-top: 0;
+    margin-bottom: var(--space-3);
+    font-size: 1.3rem;
+  }
+  .guide-card h3 {
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-2);
+    font-size: 0.95rem;
+  }
+  .guide-card p {
+    font-size: 0.92rem;
+  }
+  .role {
+    color: var(--text);
+  }
+  .category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .category-list a {
+    border: var(--hairline);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.22rem 0.5rem;
+  }
+  .category-list a:hover {
+    color: var(--text);
+    background: var(--elevated);
+    text-decoration: none;
+  }
+  @media (min-width: 820px) {
+    .guide-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

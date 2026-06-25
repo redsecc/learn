@@ -20,6 +20,7 @@ export const SITE = {
     'infosec learning',
   ],
   social: {
+    website: 'https://redsec.cc',
     github: 'https://github.com/redsecc/website',
     // Vanity redirect that always points at the current Discord invite.
     discord: 'https://discord.redsec.cc',

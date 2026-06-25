@@ -5,17 +5,24 @@ import { SITE } from '../lib/site';
 const year = new Date().getFullYear();
 
 const links = [
+  { label: 'Main site', href: SITE.social.website },
   { label: 'GitHub', href: SITE.social.github },
   { label: 'Community', href: SITE.social.discord },
 ];
 
 const sections = [
   { label: 'Start learning', href: withBase('/getting-started/welcome') },
+  { label: 'Learning paths', href: withBase('/learning-paths') },
+  { label: 'Path guide', href: withBase('/path-guide') },
   { label: 'Foundations', href: withBase('/foundations') },
   { label: 'Web security', href: withBase('/web-security') },
   { label: 'Bug bounties', href: withBase('/bug-bounties') },
   { label: 'CTFs', href: withBase('/ctfs') },
-  { label: 'redsec.cc', href: 'https://redsec.cc' },
+];
+
+const legal = [
+  { label: 'Code of Conduct', href: withBase('/code-of-conduct') },
+  { label: 'Legal', href: withBase('/legal') },
 ];
 ---
 
@@ -42,6 +49,10 @@ const sections = [
         ))
       }
     </nav>
+
+    <nav class="footer-nav" aria-label="Legal">
+      {legal.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
   </div>
 
   <div class="container footer-base">
@@ -66,7 +77,7 @@ const sections = [
   }
   @media (min-width: 720px) {
     .footer-inner {
-      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
     }
   }
   .footer-tag {
