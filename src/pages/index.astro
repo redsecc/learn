@@ -1,10 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getDocsBySection, SECTIONS } from '../lib/docs';
-import { pageSlugOf } from '../lib/docs';
+import { getLessonsBySection, pageSlugOf } from '../lib/learn';
 import { withBase } from '../lib/base';
 
-const groups = await getDocsBySection();
+const groups = await getLessonsBySection();
+const lessonCount = groups.reduce((sum, group) => sum + group.pages.length, 0);
+const sectionCount = groups.length;
 // First page of each section, for "jump in" links.
 const firstPageHref = (slug: string) => {
   const g = groups.find((g) => g.section.slug === slug);
@@ -15,7 +16,7 @@ const start = firstPageHref('getting-started');
 ---
 
 <BaseLayout
-  title="Docs"
+  title="Learn"
   description="The RedSec learning platform — a free, open guide to offensive security: CTFs, bug bounties, and finding vulnerabilities."
 >
   <section class="lander">
@@ -23,18 +24,32 @@ const start = firstPageHref('getting-started');
       <span class="eyebrow">Learn · learn.redsec.cc</span>
       <h1 class="lander-title">Start learning at <span class="accent">RedSec</span>.</h1>
       <p class="lead">
-        A free, open guide to offensive security. Work through it like a
-        handbook — pick a section, follow the pages in order, or jump straight to
-        what you need from the sidebar.
+        A free, open learning library for offensive security. Work through
+        structured tutorials, labs, references, and reporting guides in the
+        order that matches your goal.
       </p>
+      <dl class="stats" aria-label="Learning library stats">
+        <div>
+          <dt>{lessonCount}+</dt>
+          <dd>lessons</dd>
+        </div>
+        <div>
+          <dt>{sectionCount}</dt>
+          <dd>sections</dd>
+        </div>
+        <div>
+          <dt>0</dt>
+          <dd>accounts required</dd>
+        </div>
+      </dl>
       <div class="lander-actions">
-        <a class="btn btn-primary" href={start}>Start reading →</a>
-        <a class="btn" href="https://redsec.cc">redsec.cc ↗</a>
+        <a class="btn btn-primary" href={start}>Start learning →</a>
+        <a class="btn" href="#library">Browse library ↓</a>
       </div>
     </div>
   </section>
 
-  <section class="section">
+  <section id="library" class="section">
     <div class="container">
       <div class="grid grid-2">
         {
@@ -42,7 +57,9 @@ const start = firstPageHref('getting-started');
             <a class="sec-card" href={firstPageHref(section.slug)}>
               <div class="sec-top">
                 <span class="sec-icon mono" aria-hidden="true">{section.icon}</span>
-                <span class="sec-count mono">{pages.length} {pages.length === 1 ? 'page' : 'pages'}</span>
+                <span class="sec-count mono">
+                  {pages.length} {pages.length === 1 ? 'lesson' : 'lessons'}
+                </span>
               </div>
               <h2 class="sec-title">{section.title}</h2>
               <p class="sec-summary">{section.summary}</p>
@@ -66,6 +83,31 @@ const start = firstPageHref('getting-started');
   }
   .lander .lead {
     max-width: var(--maxw-prose);
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+    max-width: 36rem;
+    margin: var(--space-8) 0 0;
+  }
+  .stats div {
+    border: var(--hairline);
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: var(--space-4);
+  }
+  .stats dt {
+    color: var(--text);
+    font-size: 1.35rem;
+    line-height: 1;
+    margin-bottom: var(--space-2);
+  }
+  .stats dd {
+    margin: 0;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
   }
   .lander-actions {
     display: flex;
@@ -98,7 +140,7 @@ const start = firstPageHref('getting-started');
   }
   .sec-icon {
     color: var(--red);
-    font-size: 1.1rem;
+    font-size: 0.82rem;
   }
   .sec-count {
     color: var(--text-muted);
@@ -122,5 +164,10 @@ const start = firstPageHref('getting-started');
   }
   .sec-card:hover .sec-go {
     color: var(--red-hover);
+  }
+  @media (max-width: 520px) {
+    .stats {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

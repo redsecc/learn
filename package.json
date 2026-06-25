@@ -8,6 +8,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "generate:learn": "node scripts/generate-learning-content.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

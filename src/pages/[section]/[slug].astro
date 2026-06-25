@@ -1,37 +1,37 @@
 ---
 import { render } from 'astro:content';
-import DocsLayout from '../../layouts/DocsLayout.astro';
+import LearnLayout from '../../layouts/LearnLayout.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import Callout from '../../components/Callout.astro';
-import { getSortedDocs, sectionOf, pageSlugOf, sectionMeta } from '../../lib/docs';
+import { getSortedLessons, sectionOf, pageSlugOf, sectionMeta } from '../../lib/learn';
 import { withBase } from '../../lib/base';
 import { abs, breadcrumb, ORG_REF, SITE_REF } from '../../lib/seo';
 
 export async function getStaticPaths() {
-  const docs = await getSortedDocs();
-  return docs.map((doc, i) => ({
-    params: { section: sectionOf(doc.id), slug: pageSlugOf(doc.id) },
+  const lessons = await getSortedLessons();
+  return lessons.map((lesson, i) => ({
+    params: { section: sectionOf(lesson.id), slug: pageSlugOf(lesson.id) },
     props: {
-      doc,
-      prev: i > 0 ? docs[i - 1] : null,
-      next: i < docs.length - 1 ? docs[i + 1] : null,
+      lesson,
+      prev: i > 0 ? lessons[i - 1] : null,
+      next: i < lessons.length - 1 ? lessons[i + 1] : null,
     },
   }));
 }
 
-const { doc, prev, next } = Astro.props;
-const section = sectionMeta(sectionOf(doc.id));
-const { Content, headings } = await render(doc);
+const { lesson, prev, next } = Astro.props;
+const section = sectionMeta(sectionOf(lesson.id));
+const { Content, headings } = await render(lesson);
 
-const hrefFor = (d: typeof doc) => withBase(`/${sectionOf(d.id)}/${pageSlugOf(d.id)}`);
+const hrefFor = (d: typeof lesson) => withBase(`/${sectionOf(d.id)}/${pageSlugOf(d.id)}`);
 
 const jsonLd = [
   {
     '@type': 'TechArticle',
-    headline: doc.data.title,
-    description: doc.data.summary,
-    url: abs(`/${doc.id}`),
-    keywords: doc.data.tags.join(', '),
+    headline: lesson.data.title,
+    description: lesson.data.summary,
+    url: abs(`/${lesson.id}`),
+    keywords: lesson.data.tags.join(', '),
     articleSection: section?.title,
     inLanguage: 'en',
     author: ORG_REF,
@@ -40,30 +40,35 @@ const jsonLd = [
   },
   breadcrumb([
     ...(section ? [{ name: section.title, path: `/${section.slug}` }] : []),
-    { name: doc.data.title, path: `/${doc.id}` },
+    { name: lesson.data.title, path: `/${lesson.id}` },
   ]),
 ];
 ---
 
-<DocsLayout
-  title={doc.data.title}
-  description={doc.data.summary ?? `${doc.data.title} — RedSec docs`}
-  current={doc.id}
+<LearnLayout
+  title={lesson.data.title}
+  description={lesson.data.summary ?? `${lesson.data.title} — RedSec learning`}
+  current={lesson.id}
   currentSection={section?.slug}
   jsonLd={jsonLd}
 >
   <nav class="crumbs mono" aria-label="Breadcrumb">
-    <a href={withBase('/')}>docs</a>
+    <a href={withBase('/')}>learn</a>
     <span aria-hidden="true">/</span>
     {section && <a href={withBase(`/${section.slug}`)}>{section.slug}</a>}
     <span aria-hidden="true">/</span>
-    <span>{pageSlugOf(doc.id)}</span>
+    <span>{pageSlugOf(lesson.id)}</span>
   </nav>
 
-  <header class="doc-head">
+  <header class="lesson-head">
     {section && <span class="eyebrow">{section.title}</span>}
-    <h1>{doc.data.title}</h1>
-    {doc.data.summary && <p class="lead">{doc.data.summary}</p>}
+    <h1>{lesson.data.title}</h1>
+    {lesson.data.summary && <p class="lead">{lesson.data.summary}</p>}
+    <div class="lesson-meta" aria-label="Lesson metadata">
+      <span class="chip" data-difficulty={lesson.data.level}>{lesson.data.level}</span>
+      <span class="chip">{lesson.data.kind}</span>
+      {lesson.data.duration && <span class="chip">{lesson.data.duration}</span>}
+    </div>
   </header>
 
   <div class="prose">
@@ -94,7 +99,7 @@ const jsonLd = [
   </nav>
 
   <TableOfContents slot="toc" headings={headings} />
-</DocsLayout>
+</LearnLayout>
 
 <style>
   .crumbs {
@@ -108,11 +113,17 @@ const jsonLd = [
   .crumbs a {
     color: var(--text-secondary);
   }
-  .doc-head {
+  .lesson-head {
     margin-bottom: var(--space-8);
   }
-  .doc-head h1 {
+  .lesson-head h1 {
     margin-bottom: var(--space-4);
+  }
+  .lesson-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
   }
   .prevnext {
     display: grid;
