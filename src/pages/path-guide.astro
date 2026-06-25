@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { withBase } from '../lib/base';
-import { PATHS, getSections, sectionHref } from '../lib/paths';
+import { PATHS, getDomains, getSections, sectionHref } from '../lib/paths';
 
 const description =
   'Plain-language explanations of each RedSec learning path: red teaming, pentesting, blue teaming, defensive security, bug bounties, AppSec, CTFs, binary exploitation, cloud, and forensics.';
@@ -45,6 +45,30 @@ const description =
 
             <h3>End state</h3>
             <p>{path.outcome}</p>
+
+            <h3>Real-world domains</h3>
+            <div class="domain-list">
+              {
+                getDomains(path.domainIds).map((domain) => (
+                  <a href={withBase(`/learning-paths#domain-${domain.id}`)}>
+                    <span>{domain.title}</span>
+                    <small>{domain.summary}</small>
+                  </a>
+                ))
+              }
+            </div>
+
+            <h3>Milestone flow</h3>
+            <ol class="milestone-list">
+              {
+                path.milestones.map((milestone) => (
+                  <li>
+                    <strong>{milestone.label}</strong>
+                    <p>{milestone.note}</p>
+                  </li>
+                ))
+              }
+            </ol>
 
             <h3>Categories in this path</h3>
             <div class="category-list">
@@ -118,6 +142,49 @@ const description =
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
+  }
+  .domain-list,
+  .milestone-list {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .domain-list a {
+    display: grid;
+    gap: 0.2rem;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    padding: var(--space-3);
+  }
+  .domain-list a:hover {
+    color: var(--text);
+    background: var(--elevated);
+    text-decoration: none;
+  }
+  .domain-list span {
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+  .domain-list small {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  .milestone-list {
+    list-style: decimal-leading-zero;
+    margin: 0;
+    padding-left: 1.35rem;
+  }
+  .milestone-list li {
+    margin: 0;
+    color: var(--text-muted);
+  }
+  .milestone-list strong {
+    color: var(--text);
+  }
+  .milestone-list p {
+    margin: var(--space-1) 0 0;
   }
   .category-list a {
     border: var(--hairline);

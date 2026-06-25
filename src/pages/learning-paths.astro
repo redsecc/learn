@@ -5,7 +5,9 @@ import {
   CORE_SECTIONS,
   FINISH_SECTION,
   PATHS,
+  REAL_WORLD_DOMAINS,
   START_SECTION,
+  getDomains,
   getSections,
   sectionHref,
 } from '../lib/paths';
@@ -14,90 +16,201 @@ const start = getSections([START_SECTION])[0];
 const core = getSections(CORE_SECTIONS);
 const finish = getSections([FINISH_SECTION])[0];
 
+const domains = REAL_WORLD_DOMAINS.map((domain) => ({
+  ...domain,
+  paths: PATHS.filter((path) => path.domainIds.includes(domain.id)),
+}));
+
 const description =
-  'Start-to-finish RedSec learning paths for red teaming, pentesting, blue teaming, defensive security, bug bounties, AppSec, CTFs, binary exploitation, cloud, and forensics.';
+  'Detailed RedSec learning path flow chart across web security, cloud compute, enterprise identity, blue team, red team, CTF, binary exploitation, forensics, and reporting.';
 ---
 
 <BaseLayout title="Learning Paths" description={description}>
   <section class="paths-hero">
     <div class="container">
       <span class="eyebrow">Learning paths</span>
-      <h1>Start with the basics, then branch into a role.</h1>
+      <h1>Start with the basics, then branch into real-world security work.</h1>
       <p class="lead">
-        Every path starts with the same foundation, splits into role-focused
-        categories, and ends with clear notes, evidence, and next steps.
+        The flow chart starts everyone at the same foundation, splits into
+        practical domains like web, cloud compute, identity, detection, and
+        low-level systems, then maps those domains into role-specific paths.
       </p>
       <div class="path-actions">
-        <a class="btn btn-primary" href="#flow">View flow chart</a>
+        <a class="btn btn-primary" href="#role-flows">View role flows</a>
+        <a class="btn" href="#domains">View real-world domains</a>
         <a class="btn" href={withBase('/path-guide')}>What the paths mean</a>
       </div>
     </div>
   </section>
 
   <section id="flow" class="section">
-    <div class="container flow-wrap">
-      <div class="flow-node flow-start">
-        <span class="flow-kicker mono">start</span>
-        <h2>{start.title}</h2>
-        <p>{start.summary}</p>
-        <a class="node-link mono" href={withBase(sectionHref(start.slug))}>Open category</a>
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Foundation</span>
+        <h2>Shared starting flow</h2>
+        <p>
+          These nodes come before specialization. They keep the rest of the
+          library grounded in safe practice, core concepts, Linux, and networks.
+        </p>
       </div>
 
-      <div class="flow-node flow-core">
-        <span class="flow-kicker mono">shared core</span>
-        <h2>Build the base every path needs</h2>
-        <div class="section-pills">
-          {
-            core.map((section) => (
-              <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
-            ))
-          }
+      <div class="foundation-flow" aria-label="Shared foundation flow">
+        <a class="flow-node flow-node-start" href={withBase(sectionHref(start.slug))}>
+          <span class="flow-kicker mono">start</span>
+          <strong>{start.title}</strong>
+          <span>{start.summary}</span>
+        </a>
+        <span class="flow-connector" aria-hidden="true"></span>
+        <div class="flow-node">
+          <span class="flow-kicker mono">shared core</span>
+          <strong>Build the base every path needs</strong>
+          <div class="section-pills">
+            {
+              core.map((section) => (
+                <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+              ))
+            }
+          </div>
+        </div>
+        <span class="flow-connector" aria-hidden="true"></span>
+        <div class="flow-node flow-node-decision">
+          <span class="flow-kicker mono">branch</span>
+          <strong>Choose real-world work</strong>
+          <span>Web, cloud compute, identity, detection, systems, or research.</span>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="split-label mono" aria-hidden="true">choose a branch</div>
+  <section id="domains" class="section domain-section">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Real-world domains</span>
+        <h2>Where the paths actually split.</h2>
+        <p>
+          Security roles overlap, but the day-to-day work separates into
+          concrete surfaces. Use these lanes to decide whether you want web
+          apps, cloud compute, enterprise identity, detection, low-level
+          systems, or research workflow.
+        </p>
+      </div>
 
-      <div class="path-grid">
+      <div class="domain-lanes">
         {
-          PATHS.map((path) => (
-            <article class="path-card" id={path.id}>
-              <div class="path-top">
-                <span class="path-id mono">{path.shortTitle}</span>
-                <a class="path-guide-link mono" href={withBase(`/path-guide#${path.id}`)}>
-                  guide
-                </a>
+          domains.map((domain) => (
+            <article class="domain-lane" id={`domain-${domain.id}`}>
+              <div class="lane-marker mono">{domain.shortTitle}</div>
+              <div class="lane-main">
+                <h3>{domain.title}</h3>
+                <p>{domain.summary}</p>
+                <div class="lane-examples">
+                  {domain.examples.map((example) => (
+                    <span>{example}</span>
+                  ))}
+                </div>
+                <div class="section-pills">
+                  {getSections(domain.sections).map((section) => (
+                    <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                  ))}
+                </div>
               </div>
-              <h2>{path.title}</h2>
-              <p>{path.summary}</p>
-
-              <ol class="stage-list">
-                {
-                  path.stages.map((stage) => (
-                    <li>
-                      <span class="stage-label mono">{stage.label}</span>
-                      <span class="stage-note">{stage.note}</span>
-                      <span class="stage-sections">
-                        {getSections(stage.sections).map((section) => (
-                          <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
-                        ))}
-                      </span>
-                    </li>
-                  ))
-                }
-              </ol>
+              <div class="lane-used">
+                <span class="mini-label mono">used by</span>
+                <div>
+                  {domain.paths.map((path) => (
+                    <a href={`#${path.id}`}>{path.shortTitle}</a>
+                  ))}
+                </div>
+              </div>
             </article>
           ))
         }
       </div>
+    </div>
+  </section>
 
-      <div class="flow-node flow-finish">
-        <span class="flow-kicker mono">finish</span>
-        <h2>{finish.title}</h2>
+  <section id="role-flows" class="section">
+    <div class="container">
+      <div class="section-heading">
+        <span class="eyebrow">Role flow chart</span>
+        <h2>Pick a path and follow the branch sequence.</h2>
         <p>
-          Convert what you learned into clean writeups, responsible reports,
-          portfolio notes, interview stories, or defensive action plans.
+          Each path still shares the starting foundation, but the middle of the
+          chart is different: real-world domains first, then milestones that
+          tell you what to practice in order.
         </p>
-        <a class="node-link mono" href={withBase(sectionHref(finish.slug))}>Open category</a>
+      </div>
+
+      <div class="role-flows">
+        {
+          PATHS.map((path) => (
+            <article class="role-flow" id={path.id}>
+              <header class="role-head">
+                <div>
+                  <span class="path-id mono">{path.shortTitle}</span>
+                  <h3>{path.title}</h3>
+                </div>
+                <a class="path-guide-link mono" href={withBase(`/path-guide#${path.id}`)}>
+                  guide
+                </a>
+              </header>
+              <p class="role-summary">{path.summary}</p>
+
+              <div class="flow-grid">
+                <div class="flow-step">
+                  <span class="flow-kicker mono">01 start</span>
+                  <strong>{start.title}</strong>
+                  <a href={withBase(sectionHref(start.slug))}>Open category</a>
+                </div>
+                <span class="grid-connector" aria-hidden="true"></span>
+                <div class="flow-step flow-step-core">
+                  <span class="flow-kicker mono">02 core</span>
+                  <strong>Shared fundamentals</strong>
+                  <div class="compact-pills">
+                    {core.map((section) => (
+                      <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                    ))}
+                  </div>
+                </div>
+                <span class="grid-connector" aria-hidden="true"></span>
+                <div class="flow-step">
+                  <span class="flow-kicker mono">03 domains</span>
+                  <strong>Real-world lanes</strong>
+                  <div class="domain-chips">
+                    {getDomains(path.domainIds).map((domain) => (
+                      <a href={`#domain-${domain.id}`}>{domain.title}</a>
+                    ))}
+                  </div>
+                </div>
+                <span class="grid-connector" aria-hidden="true"></span>
+                <ol class="milestone-flow" aria-label={`${path.title} milestones`}>
+                  {path.milestones.map((milestone, index) => (
+                    <li>
+                      <span class="milestone-number mono">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <div>
+                        <strong>{milestone.label}</strong>
+                        <p>{milestone.note}</p>
+                        <div class="compact-pills">
+                          {getSections(milestone.sections).map((section) => (
+                            <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                          ))}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+                <span class="grid-connector" aria-hidden="true"></span>
+                <div class="flow-step flow-step-finish">
+                  <span class="flow-kicker mono">finish</span>
+                  <strong>{finish.title}</strong>
+                  <a href={withBase(sectionHref(finish.slug))}>Open category</a>
+                </div>
+              </div>
+            </article>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -109,7 +222,7 @@ const description =
     border-bottom: var(--hairline);
   }
   .paths-hero h1 {
-    max-width: 52rem;
+    max-width: 58rem;
   }
   .path-actions {
     display: flex;
@@ -117,129 +230,263 @@ const description =
     gap: var(--space-3);
     margin-top: var(--space-8);
   }
-  .flow-wrap {
+  .section-heading {
+    max-width: 58rem;
+    margin-bottom: var(--space-8);
+  }
+  .section-heading h2 {
+    margin-top: var(--space-2);
+  }
+  .foundation-flow,
+  .flow-grid {
     display: grid;
-    gap: var(--space-8);
+    gap: var(--space-3);
   }
-  .flow-node {
+  .flow-node,
+  .flow-step {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
     border: var(--line);
-    background: var(--surface);
     border-radius: var(--radius);
-    padding: var(--space-6);
-    position: relative;
+    background: var(--surface);
+    padding: var(--space-5, 1.25rem);
+    min-width: 0;
   }
-  .flow-node h2 {
-    margin-top: 0;
-    margin-bottom: var(--space-3);
-    font-size: 1.45rem;
+  .flow-node:hover {
+    text-decoration: none;
+  }
+  .flow-node strong,
+  .flow-step strong {
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+  .flow-node span,
+  .flow-step a,
+  .role-summary,
+  .lane-main p,
+  .milestone-flow p {
+    color: var(--text-secondary);
+  }
+  .flow-node-start,
+  .flow-step-finish {
+    border-color: color-mix(in srgb, var(--red) 44%, var(--border));
+  }
+  .flow-node-decision {
+    background: var(--elevated);
+  }
+  .flow-connector,
+  .grid-connector {
+    display: block;
+    justify-self: center;
+    width: 1px;
+    min-height: 1.6rem;
+    background: var(--border);
   }
   .flow-kicker,
   .path-id,
-  .stage-label,
-  .split-label,
-  .node-link,
-  .path-guide-link {
+  .path-guide-link,
+  .mini-label,
+  .milestone-number {
     color: var(--text-muted);
     font-size: 0.74rem;
   }
-  .flow-start,
-  .flow-finish {
-    border-color: color-mix(in srgb, var(--red) 42%, var(--border));
-  }
-  .node-link,
-  .path-guide-link {
-    color: var(--red-hover);
-  }
   .section-pills,
-  .stage-sections {
+  .compact-pills,
+  .domain-chips,
+  .lane-examples,
+  .lane-used div {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
   }
   .section-pills a,
-  .stage-sections a {
+  .compact-pills a,
+  .domain-chips a,
+  .lane-examples span,
+  .lane-used a {
     border: var(--hairline);
     border-radius: var(--radius);
     color: var(--text-secondary);
     font-family: var(--font-mono);
     font-size: 0.72rem;
-    padding: 0.22rem 0.5rem;
+    line-height: 1.35;
+    padding: 0.24rem 0.5rem;
   }
   .section-pills a:hover,
-  .stage-sections a:hover {
+  .compact-pills a:hover,
+  .domain-chips a:hover,
+  .lane-used a:hover {
     color: var(--text);
     background: var(--elevated);
     text-decoration: none;
   }
-  .split-label {
-    justify-self: center;
-    border: var(--hairline);
-    border-radius: var(--radius);
-    padding: 0.25rem 0.7rem;
-    background: var(--bg);
+  .domain-section {
+    border-block: var(--hairline);
   }
-  .path-grid {
+  .domain-lanes {
     display: grid;
     gap: var(--space-4);
   }
-  .path-card {
-    border: var(--hairline);
-    background: var(--surface);
+  .domain-lane {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+    border-top: var(--hairline);
+    padding-top: var(--space-5, 1.25rem);
+  }
+  .lane-marker {
+    display: grid;
+    place-items: center;
+    min-height: 3rem;
+    border: var(--line);
     border-radius: var(--radius);
-    padding: var(--space-5, 1.25rem);
+    color: var(--text);
+    background: var(--surface);
+    font-size: 0.72rem;
+    text-align: center;
   }
-  .path-card h2 {
-    margin-top: 0;
-    font-size: 1.12rem;
-  }
-  .path-card p {
-    font-size: 0.92rem;
-  }
-  .path-top {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-3);
-    margin-bottom: var(--space-3);
-  }
-  .stage-list {
-    list-style: none;
-    margin: var(--space-5, 1.25rem) 0 0;
-    padding: 0;
+  .lane-main {
     display: grid;
     gap: var(--space-3);
+    min-width: 0;
   }
-  .stage-list li {
+  .lane-main h3 {
     margin: 0;
+    font-size: 1.15rem;
+  }
+  .lane-main p {
+    margin: 0;
+    max-width: 48rem;
+  }
+  .lane-used {
+    grid-column: 2;
     display: grid;
     gap: var(--space-2);
-    border-top: var(--hairline);
-    padding-top: var(--space-3);
   }
-  .stage-note {
-    color: var(--text-secondary);
-    font-size: 0.88rem;
+  .role-flows {
+    display: grid;
+    gap: var(--space-10);
   }
-  @media (min-width: 760px) {
-    .flow-wrap {
-      position: relative;
+  .role-flow {
+    border-top: var(--line);
+    padding-top: var(--space-6);
+  }
+  .role-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+  .role-head h3 {
+    margin: var(--space-1) 0 0;
+    font-size: 1.35rem;
+  }
+  .path-guide-link {
+    align-self: start;
+    color: var(--red-hover);
+  }
+  .role-summary {
+    max-width: 54rem;
+    margin-bottom: var(--space-5, 1.25rem);
+  }
+  .flow-step {
+    min-height: 100%;
+  }
+  .flow-step-core {
+    background: color-mix(in srgb, var(--surface) 82%, var(--elevated));
+  }
+  .milestone-flow {
+    list-style: none;
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+  }
+  .milestone-flow li {
+    display: grid;
+    grid-template-columns: 2.3rem minmax(0, 1fr);
+    gap: var(--space-3);
+    margin: 0;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: var(--space-4);
+  }
+  .milestone-number {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    background: var(--elevated);
+    color: var(--text);
+  }
+  .milestone-flow strong {
+    display: block;
+    color: var(--text);
+    margin-bottom: var(--space-2);
+  }
+  .milestone-flow p {
+    margin: 0 0 var(--space-3);
+    font-size: 0.9rem;
+  }
+
+  @media (min-width: 780px) {
+    .foundation-flow {
+      grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1.35fr) 2.5rem minmax(0, 1fr);
+      align-items: stretch;
     }
-    .flow-wrap::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 1px;
-      background: var(--border);
-      z-index: -1;
+    .flow-connector,
+    .grid-connector {
+      align-self: center;
+      justify-self: stretch;
+      width: auto;
+      height: 1px;
+      min-height: 0;
     }
-    .path-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .domain-lane {
+      grid-template-columns: 6.5rem minmax(0, 1fr) minmax(12rem, 0.42fr);
+    }
+    .lane-used {
+      grid-column: auto;
+      align-self: center;
     }
   }
-  @media (min-width: 1080px) {
-    .path-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  @media (min-width: 1180px) {
+    .flow-grid {
+      grid-template-columns:
+        minmax(8rem, 0.75fr) 1.75rem minmax(10rem, 0.95fr) 1.75rem
+        minmax(12rem, 1fr) 1.75rem minmax(22rem, 2.1fr) 1.75rem minmax(8rem, 0.75fr);
+      align-items: stretch;
+    }
+    .grid-connector {
+      align-self: center;
+      justify-self: stretch;
+      width: auto;
+      height: 1px;
+      min-height: 0;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .domain-lane {
+      grid-template-columns: 1fr;
+    }
+    .lane-marker {
+      justify-self: start;
+      min-height: auto;
+      padding: 0.55rem 0.75rem;
+    }
+    .lane-used {
+      grid-column: auto;
+    }
+    .role-head {
+      display: grid;
     }
   }
 </style>

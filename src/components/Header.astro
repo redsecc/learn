@@ -51,12 +51,12 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
       <nav id="primary-nav" class="primary-nav" aria-label="Primary">
         <ul>
           <li class="nav-dropdown">
-            <details class="nav-menu">
-              <summary class:list={['nav-link', 'nav-summary', { active: learnActive }]}>
+            <div class="nav-menu">
+              <a class:list={['nav-link', 'nav-summary', { active: learnActive }]} href={withBase('/')}>
                 <span>Learn</span>
                 <span class="nav-caret" aria-hidden="true">v</span>
-              </summary>
-              <div class="nav-menu-panel">
+              </a>
+              <div class="nav-menu-panel" aria-label="Learning categories">
                 <a class="nav-menu-item nav-menu-all" href={withBase('/')}>
                   <span class="nav-menu-title">All learning</span>
                   <span class="nav-menu-summary">Browse every category in the library.</span>
@@ -73,7 +73,7 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
                   ))
                 }
               </div>
-            </details>
+            </div>
           </li>
           {
             nav.map((item) => (
@@ -135,9 +135,6 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
 
       const close = () => {
         this.classList.remove('open');
-        this.querySelectorAll('details[open]').forEach((details) => {
-          details.removeAttribute('open');
-        });
         btn.setAttribute('aria-expanded', 'false');
         btn.setAttribute('aria-label', 'Open menu');
       };
@@ -222,6 +219,14 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
   .nav-dropdown {
     position: relative;
   }
+  .nav-dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 0.6rem;
+  }
   .nav-menu {
     position: relative;
   }
@@ -230,17 +235,15 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
     align-items: center;
     gap: 0.35rem;
     list-style: none;
-    cursor: pointer;
-  }
-  .nav-summary::-webkit-details-marker {
-    display: none;
   }
   .nav-caret {
     color: var(--text-muted);
     font-size: 0.7rem;
     line-height: 1;
+    transition: transform 0.15s ease;
   }
-  .nav-menu[open] .nav-caret {
+  .nav-dropdown:hover .nav-caret,
+  .nav-dropdown:focus-within .nav-caret {
     transform: rotate(180deg);
   }
   .nav-menu-panel {
@@ -256,6 +259,18 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
     border: var(--line);
     border-radius: var(--radius);
     padding: var(--space-2);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-0.25rem);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+    visibility: hidden;
+  }
+  .nav-dropdown:hover .nav-menu-panel,
+  .nav-dropdown:focus-within .nav-menu-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
   }
   .nav-menu-item {
     display: grid;
@@ -378,6 +393,9 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
     .nav-dropdown {
       border-bottom: var(--hairline);
     }
+    .nav-dropdown::after {
+      display: none;
+    }
     .nav-link {
       display: block;
       padding: 0.75rem 0;
@@ -396,6 +414,13 @@ const learnActive = learnLinks.some((item) => isActive(item.href));
       margin: 0 0 var(--space-3);
       border: var(--hairline);
       background: var(--bg);
+      opacity: 1;
+      pointer-events: auto;
+      transform: none;
+      visibility: visible;
+    }
+    .nav-caret {
+      transform: rotate(180deg);
     }
     .nav-link.active {
       border-bottom: var(--hairline);
