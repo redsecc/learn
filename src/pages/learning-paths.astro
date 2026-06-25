@@ -29,15 +29,14 @@ const description =
   <section class="paths-hero">
     <div class="container">
       <span class="eyebrow">Learning paths</span>
-      <h1>Start with the basics, then branch into real-world security work.</h1>
+      <h1>Start at the top, then move down into real-world security work.</h1>
       <p class="lead">
-        The flow chart starts everyone at the same foundation, splits into
-        practical domains like web, cloud compute, identity, detection, and
-        low-level systems, then maps those domains into role-specific paths.
+        The roadmap uses a top-to-bottom flow: foundation first, shared core
+        next, then real-world domains and role-specific milestones.
       </p>
       <div class="path-actions">
-        <a class="btn btn-primary" href="#role-flows">View role flows</a>
-        <a class="btn" href="#domains">View real-world domains</a>
+        <a class="btn btn-primary" href="#flow">View roadmap</a>
+        <a class="btn" href="#role-flows">View role paths</a>
         <a class="btn" href={withBase('/path-guide')}>What the paths mean</a>
       </div>
     </div>
@@ -46,37 +45,53 @@ const description =
   <section id="flow" class="section">
     <div class="container">
       <div class="section-heading">
-        <span class="eyebrow">Foundation</span>
+        <span class="eyebrow">Top-down roadmap</span>
         <h2>Shared starting flow</h2>
         <p>
-          These nodes come before specialization. They keep the rest of the
-          library grounded in safe practice, core concepts, Linux, and networks.
+          Everyone starts with the same base. From there, the roadmap branches
+          into domains like web, cloud compute, identity, detection, low-level
+          systems, and research workflow.
         </p>
       </div>
 
-      <div class="foundation-flow" aria-label="Shared foundation flow">
-        <a class="flow-node flow-node-start" href={withBase(sectionHref(start.slug))}>
-          <span class="flow-kicker mono">start</span>
-          <strong>{start.title}</strong>
-          <span>{start.summary}</span>
+      <div class="roadmap-frame shared-roadmap" aria-label="Shared top-to-bottom learning roadmap">
+        <a class="roadmap-node roadmap-node-wide roadmap-node-start" href={withBase(sectionHref(start.slug))}>
+          <span class="node-art mono">{start.icon}</span>
+          <span class="node-body">
+            <span class="node-kicker mono">start</span>
+            <strong>{start.title}</strong>
+            <small>{start.summary}</small>
+          </span>
         </a>
-        <span class="flow-connector" aria-hidden="true"></span>
-        <div class="flow-node">
-          <span class="flow-kicker mono">shared core</span>
-          <strong>Build the base every path needs</strong>
-          <div class="section-pills">
+
+        <span class="roadmap-spine" aria-hidden="true"></span>
+
+        <div class="roadmap-group">
+          <span class="group-label mono">shared core</span>
+          <div class="node-grid">
             {
               core.map((section) => (
-                <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                <a class="roadmap-node roadmap-node-small" href={withBase(sectionHref(section.slug))}>
+                  <span class="node-art mono">{section.icon}</span>
+                  <span class="node-body">
+                    <strong>{section.title}</strong>
+                    <small>{section.summary}</small>
+                  </span>
+                </a>
               ))
             }
           </div>
         </div>
-        <span class="flow-connector" aria-hidden="true"></span>
-        <div class="flow-node flow-node-decision">
-          <span class="flow-kicker mono">branch</span>
-          <strong>Choose real-world work</strong>
-          <span>Web, cloud compute, identity, detection, systems, or research.</span>
+
+        <span class="roadmap-spine" aria-hidden="true"></span>
+
+        <div class="roadmap-node roadmap-node-wide roadmap-node-branch">
+          <span class="node-art mono">map</span>
+          <span class="node-body">
+            <span class="node-kicker mono">branch</span>
+            <strong>Pick a real-world surface</strong>
+            <small>Choose the work you want to practice before picking a role path.</small>
+          </span>
         </div>
       </div>
     </div>
@@ -86,45 +101,58 @@ const description =
     <div class="container">
       <div class="section-heading">
         <span class="eyebrow">Real-world domains</span>
-        <h2>Where the paths actually split.</h2>
+        <h2>Branch by the kind of system you want to work on.</h2>
         <p>
-          Security roles overlap, but the day-to-day work separates into
-          concrete surfaces. Use these lanes to decide whether you want web
-          apps, cloud compute, enterprise identity, detection, low-level
-          systems, or research workflow.
+          These domain nodes separate the library into practical environments:
+          applications, cloud compute, identity, detection, low-level systems,
+          and reporting-driven research.
         </p>
       </div>
 
-      <div class="domain-lanes">
-        {
-          domains.map((domain) => (
-            <article class="domain-lane" id={`domain-${domain.id}`}>
-              <div class="lane-marker mono">{domain.shortTitle}</div>
-              <div class="lane-main">
-                <h3>{domain.title}</h3>
-                <p>{domain.summary}</p>
-                <div class="lane-examples">
-                  {domain.examples.map((example) => (
-                    <span>{example}</span>
-                  ))}
+      <div class="roadmap-frame domain-roadmap" aria-label="Real-world domain branches">
+        <div class="roadmap-node roadmap-node-wide">
+          <span class="node-art mono">root</span>
+          <span class="node-body">
+            <span class="node-kicker mono">domain split</span>
+            <strong>Choose one or more domains</strong>
+            <small>Roles overlap, so domain cards show which paths use them.</small>
+          </span>
+        </div>
+
+        <span class="roadmap-spine" aria-hidden="true"></span>
+
+        <div class="branch-grid">
+          {
+            domains.map((domain) => (
+              <article class="roadmap-node domain-card" id={`domain-${domain.id}`}>
+                <span class="node-art mono">{domain.shortTitle}</span>
+                <div class="node-body">
+                  <span class="node-kicker mono">domain</span>
+                  <h3>{domain.title}</h3>
+                  <p>{domain.summary}</p>
+                  <div class="example-pills">
+                    {domain.examples.map((example) => (
+                      <span>{example}</span>
+                    ))}
+                  </div>
+                  <div class="section-pills">
+                    {getSections(domain.sections).map((section) => (
+                      <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                    ))}
+                  </div>
+                  <div class="used-by">
+                    <span class="mini-label mono">used by</span>
+                    <div>
+                      {domain.paths.map((path) => (
+                        <a href={`#${path.id}`}>{path.shortTitle}</a>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div class="section-pills">
-                  {getSections(domain.sections).map((section) => (
-                    <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
-                  ))}
-                </div>
-              </div>
-              <div class="lane-used">
-                <span class="mini-label mono">used by</span>
-                <div>
-                  {domain.paths.map((path) => (
-                    <a href={`#${path.id}`}>{path.shortTitle}</a>
-                  ))}
-                </div>
-              </div>
-            </article>
-          ))
-        }
+              </article>
+            ))
+          }
+        </div>
       </div>
     </div>
   </section>
@@ -132,19 +160,19 @@ const description =
   <section id="role-flows" class="section">
     <div class="container">
       <div class="section-heading">
-        <span class="eyebrow">Role flow chart</span>
-        <h2>Pick a path and follow the branch sequence.</h2>
+        <span class="eyebrow">Role paths</span>
+        <h2>Follow each path from top to bottom.</h2>
         <p>
-          Each path still shares the starting foundation, but the middle of the
-          chart is different: real-world domains first, then milestones that
-          tell you what to practice in order.
+          Every role starts with the same base, drops into relevant domains,
+          moves through ordered milestones, and finishes with reporting and
+          career-ready output.
         </p>
       </div>
 
       <div class="role-flows">
         {
           PATHS.map((path) => (
-            <article class="role-flow" id={path.id}>
+            <article class="role-roadmap" id={path.id}>
               <header class="role-head">
                 <div>
                   <span class="path-id mono">{path.shortTitle}</span>
@@ -156,57 +184,84 @@ const description =
               </header>
               <p class="role-summary">{path.summary}</p>
 
-              <div class="flow-grid">
-                <div class="flow-step">
-                  <span class="flow-kicker mono">01 start</span>
-                  <strong>{start.title}</strong>
-                  <a href={withBase(sectionHref(start.slug))}>Open category</a>
-                </div>
-                <span class="grid-connector" aria-hidden="true"></span>
-                <div class="flow-step flow-step-core">
-                  <span class="flow-kicker mono">02 core</span>
-                  <strong>Shared fundamentals</strong>
-                  <div class="compact-pills">
+              <div class="roadmap-frame role-frame" aria-label={`${path.title} top-to-bottom roadmap`}>
+                <a class="roadmap-node roadmap-node-wide roadmap-node-start" href={withBase(sectionHref(start.slug))}>
+                  <span class="node-art mono">{start.icon}</span>
+                  <span class="node-body">
+                    <span class="node-kicker mono">01 start</span>
+                    <strong>{start.title}</strong>
+                    <small>{start.summary}</small>
+                  </span>
+                </a>
+
+                <span class="roadmap-spine" aria-hidden="true"></span>
+
+                <div class="roadmap-group">
+                  <span class="group-label mono">02 core</span>
+                  <div class="node-grid compact-grid">
                     {core.map((section) => (
-                      <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                      <a class="roadmap-node roadmap-node-small" href={withBase(sectionHref(section.slug))}>
+                        <span class="node-art mono">{section.icon}</span>
+                        <span class="node-body">
+                          <strong>{section.title}</strong>
+                          <small>{section.summary}</small>
+                        </span>
+                      </a>
                     ))}
                   </div>
                 </div>
-                <span class="grid-connector" aria-hidden="true"></span>
-                <div class="flow-step">
-                  <span class="flow-kicker mono">03 domains</span>
-                  <strong>Real-world lanes</strong>
-                  <div class="domain-chips">
+
+                <span class="roadmap-spine" aria-hidden="true"></span>
+
+                <div class="roadmap-group domain-group">
+                  <span class="group-label mono">03 domains</span>
+                  <div class="branch-grid compact-branches">
                     {getDomains(path.domainIds).map((domain) => (
-                      <a href={`#domain-${domain.id}`}>{domain.title}</a>
+                      <a class="roadmap-node branch-node" href={`#domain-${domain.id}`}>
+                        <span class="node-art mono">{domain.shortTitle}</span>
+                        <span class="node-body">
+                          <strong>{domain.title}</strong>
+                          <small>{domain.summary}</small>
+                        </span>
+                      </a>
                     ))}
                   </div>
                 </div>
-                <span class="grid-connector" aria-hidden="true"></span>
-                <ol class="milestone-flow" aria-label={`${path.title} milestones`}>
+
+                <span class="roadmap-spine" aria-hidden="true"></span>
+
+                <ol class="milestone-roadmap" aria-label={`${path.title} milestone sequence`}>
                   {path.milestones.map((milestone, index) => (
                     <li>
-                      <span class="milestone-number mono">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <div>
-                        <strong>{milestone.label}</strong>
-                        <p>{milestone.note}</p>
-                        <div class="compact-pills">
-                          {getSections(milestone.sections).map((section) => (
-                            <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
-                          ))}
+                      <div class="roadmap-node milestone-node">
+                        <span class="node-art mono">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                        <div class="node-body">
+                          <span class="node-kicker mono">milestone</span>
+                          <strong>{milestone.label}</strong>
+                          <p>{milestone.note}</p>
+                          <div class="section-pills">
+                            {getSections(milestone.sections).map((section) => (
+                              <a href={withBase(sectionHref(section.slug))}>{section.title}</a>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </li>
                   ))}
                 </ol>
-                <span class="grid-connector" aria-hidden="true"></span>
-                <div class="flow-step flow-step-finish">
-                  <span class="flow-kicker mono">finish</span>
-                  <strong>{finish.title}</strong>
-                  <a href={withBase(sectionHref(finish.slug))}>Open category</a>
-                </div>
+
+                <span class="roadmap-spine" aria-hidden="true"></span>
+
+                <a class="roadmap-node roadmap-node-wide roadmap-node-finish" href={withBase(sectionHref(finish.slug))}>
+                  <span class="node-art mono">end</span>
+                  <span class="node-body">
+                    <span class="node-kicker mono">finish</span>
+                    <strong>{finish.title}</strong>
+                    <small>Turn practice into notes, writeups, reports, interviews, and next steps.</small>
+                  </span>
+                </a>
               </div>
             </article>
           ))
@@ -237,75 +292,150 @@ const description =
   .section-heading h2 {
     margin-top: var(--space-2);
   }
-  .foundation-flow,
-  .flow-grid {
-    display: grid;
-    gap: var(--space-3);
+  .domain-section {
+    border-block: var(--hairline);
   }
-  .flow-node,
-  .flow-step {
+
+  .roadmap-frame {
+    --connector: color-mix(in srgb, var(--red-hover) 62%, var(--border));
     display: grid;
-    align-content: start;
-    gap: var(--space-3);
+    justify-items: center;
+    width: 100%;
+  }
+  .roadmap-node {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    width: min(100%, 42rem);
+    min-height: 4.75rem;
+    overflow: hidden;
     border: var(--line);
     border-radius: var(--radius);
-    background: var(--surface);
-    padding: var(--space-5, 1.25rem);
-    min-width: 0;
+    background: color-mix(in srgb, var(--surface) 88%, var(--bg));
+    color: var(--text);
   }
-  .flow-node:hover {
+  .roadmap-node:hover {
+    border-color: color-mix(in srgb, var(--red-hover) 45%, var(--border));
     text-decoration: none;
   }
-  .flow-node strong,
-  .flow-step strong {
+  .roadmap-node-wide {
+    width: min(100%, 44rem);
+  }
+  .roadmap-node-small,
+  .branch-node {
+    width: 100%;
+    min-height: 4.25rem;
+  }
+  .roadmap-node-start,
+  .roadmap-node-finish {
+    border-color: color-mix(in srgb, var(--red) 55%, var(--border));
+  }
+  .roadmap-node-branch {
+    background: var(--surface);
+  }
+  .node-art {
+    display: grid;
+    place-items: center;
+    min-height: 100%;
+    padding: var(--space-3);
+    border-right: var(--hairline);
+    background: color-mix(in srgb, var(--red-deep) 72%, var(--elevated));
     color: var(--text);
-    font-size: 1rem;
-    line-height: 1.3;
+    font-size: 0.72rem;
+    line-height: 1.1;
+    text-align: center;
   }
-  .flow-node span,
-  .flow-step a,
-  .role-summary,
-  .lane-main p,
-  .milestone-flow p {
-    color: var(--text-secondary);
+  .node-body {
+    display: grid;
+    align-content: center;
+    gap: 0.3rem;
+    min-width: 0;
+    padding: var(--space-4);
   }
-  .flow-node-start,
-  .flow-step-finish {
-    border-color: color-mix(in srgb, var(--red) 44%, var(--border));
-  }
-  .flow-node-decision {
-    background: var(--elevated);
-  }
-  .flow-connector,
-  .grid-connector {
-    display: block;
-    justify-self: center;
-    width: 1px;
-    min-height: 1.6rem;
-    background: var(--border);
-  }
-  .flow-kicker,
+  .node-kicker,
+  .group-label,
   .path-id,
   .path-guide-link,
-  .mini-label,
-  .milestone-number {
+  .mini-label {
     color: var(--text-muted);
     font-size: 0.74rem;
   }
+  .node-body strong,
+  .node-body h3 {
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1.3;
+    margin: 0;
+  }
+  .node-body small,
+  .node-body p,
+  .role-summary {
+    color: var(--text-secondary);
+  }
+  .node-body small {
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+  .node-body p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .roadmap-spine {
+    display: block;
+    width: 1px;
+    height: 2.25rem;
+    background: var(--connector);
+    position: relative;
+  }
+  .roadmap-spine::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -0.25rem;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-right: 1px solid var(--connector);
+    border-bottom: 1px solid var(--connector);
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--bg);
+  }
+  .roadmap-group {
+    width: min(100%, 54rem);
+    border: 1px dashed color-mix(in srgb, var(--red-hover) 52%, var(--border));
+    border-radius: var(--radius);
+    padding: var(--space-8) var(--space-4) var(--space-4);
+    position: relative;
+    background: color-mix(in srgb, var(--surface) 50%, transparent);
+  }
+  .group-label {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-4);
+  }
+  .node-grid,
+  .branch-grid {
+    display: grid;
+    gap: var(--space-3);
+    width: 100%;
+  }
+  .domain-roadmap .branch-grid {
+    width: min(100%, 62rem);
+  }
+  .domain-card {
+    width: 100%;
+  }
+  .domain-card .node-body {
+    align-content: start;
+  }
+  .example-pills,
   .section-pills,
-  .compact-pills,
-  .domain-chips,
-  .lane-examples,
-  .lane-used div {
+  .used-by div {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
   }
+  .example-pills span,
   .section-pills a,
-  .compact-pills a,
-  .domain-chips a,
-  .lane-examples span,
-  .lane-used a {
+  .used-by a {
     border: var(--hairline);
     border-radius: var(--radius);
     color: var(--text-secondary);
@@ -315,64 +445,25 @@ const description =
     padding: 0.24rem 0.5rem;
   }
   .section-pills a:hover,
-  .compact-pills a:hover,
-  .domain-chips a:hover,
-  .lane-used a:hover {
+  .used-by a:hover {
     color: var(--text);
     background: var(--elevated);
     text-decoration: none;
   }
-  .domain-section {
-    border-block: var(--hairline);
-  }
-  .domain-lanes {
-    display: grid;
-    gap: var(--space-4);
-  }
-  .domain-lane {
-    display: grid;
-    grid-template-columns: 5.5rem minmax(0, 1fr);
-    gap: var(--space-4);
-    align-items: start;
-    border-top: var(--hairline);
-    padding-top: var(--space-5, 1.25rem);
-  }
-  .lane-marker {
-    display: grid;
-    place-items: center;
-    min-height: 3rem;
-    border: var(--line);
-    border-radius: var(--radius);
-    color: var(--text);
-    background: var(--surface);
-    font-size: 0.72rem;
-    text-align: center;
-  }
-  .lane-main {
-    display: grid;
-    gap: var(--space-3);
-    min-width: 0;
-  }
-  .lane-main h3 {
-    margin: 0;
-    font-size: 1.15rem;
-  }
-  .lane-main p {
-    margin: 0;
-    max-width: 48rem;
-  }
-  .lane-used {
-    grid-column: 2;
+  .used-by {
     display: grid;
     gap: var(--space-2);
+    border-top: var(--hairline);
+    padding-top: var(--space-3);
+    margin-top: var(--space-2);
   }
   .role-flows {
     display: grid;
-    gap: var(--space-10);
+    gap: var(--space-12);
   }
-  .role-flow {
+  .role-roadmap {
     border-top: var(--line);
-    padding-top: var(--space-6);
+    padding-top: var(--space-8);
   }
   .role-head {
     display: flex;
@@ -390,100 +481,70 @@ const description =
   }
   .role-summary {
     max-width: 54rem;
-    margin-bottom: var(--space-5, 1.25rem);
+    margin-bottom: var(--space-6);
   }
-  .flow-step {
-    min-height: 100%;
+  .role-frame {
+    align-items: start;
   }
-  .flow-step-core {
-    background: color-mix(in srgb, var(--surface) 82%, var(--elevated));
+  .domain-group {
+    width: min(100%, 58rem);
   }
-  .milestone-flow {
-    list-style: none;
+  .milestone-roadmap {
     display: grid;
-    gap: var(--space-3);
+    justify-items: center;
+    width: min(100%, 48rem);
+    list-style: none;
     margin: 0;
     padding: 0;
   }
-  .milestone-flow li {
+  .milestone-roadmap li {
     display: grid;
-    grid-template-columns: 2.3rem minmax(0, 1fr);
-    gap: var(--space-3);
+    justify-items: center;
+    width: 100%;
     margin: 0;
-    border: var(--hairline);
-    border-radius: var(--radius);
-    background: var(--surface);
-    padding: var(--space-4);
   }
-  .milestone-number {
-    display: inline-grid;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
-    border: var(--hairline);
-    border-radius: var(--radius);
-    background: var(--elevated);
-    color: var(--text);
+  .milestone-roadmap li + li::before {
+    content: '';
+    width: 1px;
+    height: 1.5rem;
+    background: var(--connector);
   }
-  .milestone-flow strong {
-    display: block;
-    color: var(--text);
-    margin-bottom: var(--space-2);
-  }
-  .milestone-flow p {
-    margin: 0 0 var(--space-3);
-    font-size: 0.9rem;
+  .milestone-node {
+    width: 100%;
   }
 
-  @media (min-width: 780px) {
-    .foundation-flow {
-      grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1.35fr) 2.5rem minmax(0, 1fr);
-      align-items: stretch;
+  @media (min-width: 720px) {
+    .node-grid,
+    .branch-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .flow-connector,
-    .grid-connector {
-      align-self: center;
-      justify-self: stretch;
-      width: auto;
-      height: 1px;
-      min-height: 0;
+    .compact-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .domain-lane {
-      grid-template-columns: 6.5rem minmax(0, 1fr) minmax(12rem, 0.42fr);
-    }
-    .lane-used {
-      grid-column: auto;
-      align-self: center;
+    .compact-branches {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  @media (min-width: 1180px) {
-    .flow-grid {
-      grid-template-columns:
-        minmax(8rem, 0.75fr) 1.75rem minmax(10rem, 0.95fr) 1.75rem
-        minmax(12rem, 1fr) 1.75rem minmax(22rem, 2.1fr) 1.75rem minmax(8rem, 0.75fr);
-      align-items: stretch;
-    }
-    .grid-connector {
-      align-self: center;
-      justify-self: stretch;
-      width: auto;
-      height: 1px;
-      min-height: 0;
+  @media (min-width: 1100px) {
+    .domain-roadmap .branch-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (max-width: 620px) {
-    .domain-lane {
-      grid-template-columns: 1fr;
+    .roadmap-node {
+      grid-template-columns: 4rem minmax(0, 1fr);
     }
-    .lane-marker {
-      justify-self: start;
-      min-height: auto;
-      padding: 0.55rem 0.75rem;
+    .node-art {
+      padding: var(--space-2);
+      font-size: 0.66rem;
     }
-    .lane-used {
-      grid-column: auto;
+    .node-body {
+      padding: var(--space-3);
+    }
+    .roadmap-group {
+      padding-inline: var(--space-3);
     }
     .role-head {
       display: grid;
